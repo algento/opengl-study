@@ -30,3 +30,22 @@
 *.exe
 *.out
 *.app
+
+# Directories
+**bin/
+**lib/
+.cache
+.vscode
+build/
+
+# Files
+*.user
+*imgui.ini
+
+# Visual Studio
+.vs/
+sln/
+reference/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
