@@ -33,19 +33,37 @@ target_include_directories(gl-core PUBLIC
 )
 
 target_link_libraries(gl-core PUBLIC 
-    ${GLAD_LIBRAIES} 
+    ${GLAD_LIBRARIES} 
     ${GLM_LIBRARIES}
     ${GLFW3_LIBRARIES}
     ${IMGUI_LIBRARIES}
 )
 
 target_precompile_headers(gl-core PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/gl-core/glpch.h
+    ${GLCORE_SRC_DIR}/glpch.h
 )
 
-target_compile_definitions(gl-core PUBLIC
+set(GLCORE_COMPILE_DEFINITIONS 
     GLFW_INCLUDE_NONE
     SPDLOG_ENABLE_ASSERTS
     ENABLE_PROFILING
     STB_IMAGE_IMPLEMENTATION
+)
+
+if(WIN32)
+    set(GLCORE_COMPILE_DEFINITIONS ${GLCORE_COMPILE_DEFINITIONS}
+        PLATFORM_WINDOWS
+    )
+elseif(UNIX AND NOT APPLE)
+    set(GLCORE_COMPILE_DEFINITIONS ${GLCORE_COMPILE_DEFINITIONS}
+        PLATFORM_UNIX
+    )
+elseif(APPLE)
+    set(GLCORE_COMPILE_DEFINITIONS ${GLCORE_COMPILE_DEFINITIONS}
+        PLATFORM_APPLE
+    )
+endif()
+
+target_compile_definitions(gl-core PUBLIC
+    ${GLCORE_COMPILE_DEFINITIONS}
 )

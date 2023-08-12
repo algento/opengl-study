@@ -27,7 +27,7 @@ set_target_properties(gl-sandbox PROPERTIES
 )
 
 target_include_directories(gl-sandbox PUBLIC
-    ${GLCORE_SOURCES}
+    ${GLCORE_SRC_DIR}
 )
 
 target_link_libraries(gl-sandbox PUBLIC 
