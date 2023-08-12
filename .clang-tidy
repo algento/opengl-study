@@ -15,6 +15,7 @@ Checks: '*,-altera-*,-fuchsia-*,-google-*,
     -cppcoreguidelines-pro-type-union-access,
     -misc-non-private-member-variables-in-classes,
     -hicpp-vararg,
+    -hicpp-no-array-decay,
     -hicpp-signed-bitwise,
     -bugprone-easily-swappable-parameters
     -*-avoid-c-arrays
