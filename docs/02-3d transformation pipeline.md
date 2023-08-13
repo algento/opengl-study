@@ -44,6 +44,8 @@
 
     $$^{N}\!\bar{r} = \begin{bmatrix} x_n \\ y_n \\  z_n\\ 1\end{bmatrix}= \frac{1}{w_c}\begin{bmatrix} x_c \\ y_c \\  z_c\\ w_c\end{bmatrix}$$
 
+![Normalize Device Coordinates](figs/normalize-device-coordinates.png)
+
 ## Viewport Space (Screen Space)
 
 - NDC로 표현된 클립 공간 (2x2x2 cuboid)를 2차원으로 변환하여 화면에 출력하는 공간이다. 최종적으로 화면에 출력되는 카메라 이미지라고 생각하면 된다.
