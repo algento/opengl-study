@@ -90,6 +90,10 @@ void glDeleteProgram(GLuint program);
 
 ```
 
+## GLSL Language
+
+// TODO
+
 ## Vertex Shader
 
 - Vertex shader는 vertex마다 호출되며, 기본적으로 vertex가 어디에 위치하는지 등의 속성을 결정한다. Vertex shader는 VAO에서 전달된 정점 데이터를 입력받아 클립 공간에서의 정점 데이터를 출력한다.
