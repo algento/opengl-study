@@ -11,7 +11,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-#include "glpch.h"
+#include "gl-core/glpch.h"
+#include "gl-core/shader/shader.h"
 
 unsigned int CompileShader(unsigned int type, const std::string& source) {
     unsigned int id = glCreateShader(type);
@@ -126,11 +127,14 @@ int main(int argc, char** argv) {  //NOLINT
     glBindVertexArray(0);
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
+    // glcore::Shader shader("../gl-sandbox/assets/shaders/basic.glsl");
+    // shader.Bind();
+
     std::string vertexShader =
         R"(#version 330 core
-        layout(location = 0) in vec4 position;
+        layout(location = 0) in vec3 a_Position;
         void main() {
-           gl_Position = position;
+           gl_Position = vec4(a_Position, 1.0);
         })";
     std::string fragmentShader =
         R"(#version 330 core
@@ -138,9 +142,11 @@ int main(int argc, char** argv) {  //NOLINT
         void main() {
            color = vec4(1.0, 0.0, 0.0, 1.0);
         })";
+    glcore::Shader shader("basic", vertexShader, fragmentShader);
+    shader.Bind();
 
-    unsigned int shader = CreateShader(vertexShader, fragmentShader);
-    glUseProgram(shader);
+    // unsigned int shader = CreateShader(vertexShader, fragmentShader);
+    // glUseProgram(shader);
 
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
