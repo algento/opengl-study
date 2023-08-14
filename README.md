@@ -15,14 +15,15 @@
 
 ### Tutorial
 
-1. [LearnOpenGL.com](LearnOpenGL.com)
-1. [Anton's OpenGL 4 Tutorial](https://antongerdelan.net/opengl/index.html)
-1. [OGL OpenGL Tutorial (3.3 and more)](http://www.opengl-tutorial.org/kr/)
+1. [LearnOpenGL.com (Good)](LearnOpenGL.com)
+1. [Anton's OpenGL 4 Tutorial (Good)](https://antongerdelan.net/opengl/index.html)
+1. [OGL OpenGL Tutorial (Good)](http://www.opengl-tutorial.org/kr/)
 1. [Songho's OpenGL (Good)](http://www.songho.ca/opengl/index.html)
 1. [Victor Gordan's OpenGL Tutorial - Youtube](https://youtube.com/playlist?list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M-)
     - [Victor Gordan's OpenGL Tutorial - Github](https://github.com/VictorGordan/opengl-tutorials)
 1. [Suraj Sharma's C++ OpenGL3D Turorial](https://www.youtube.com/playlist?list=PL6xSOsbVA1eYSZTKBxnoXYboy7wc4yg-Z)
 1. [Jayanam's Modern OpenGL Samples](https://github.com/jayanam/jgl_demos)
+1. [ThinMatrix's OpenGL 3D Game Tutorial](https://www.youtube.com/playlist?list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP)
 1. [OpenGL 4.5 스터디](https://rvalueref.tistory.com/category/OpenGL)
 
 ### Lecture
