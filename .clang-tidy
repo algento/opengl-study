@@ -2,7 +2,6 @@
 Checks: '*,-altera-*,-fuchsia-*,-google-*,
     -zircon-*,
     -abseil-*,
-    -modernize-use-trailing-return-type,
     -llvm-*,
     -llvmlibc-*,
     -cppcoreguidelines-owning-memory,
@@ -13,11 +12,16 @@ Checks: '*,-altera-*,-fuchsia-*,-google-*,
     -cppcoreguidelines-pro-type-cstyle-cast,
     -cppcoreguidelines-avoid-magic-numbers,
     -cppcoreguidelines-pro-type-union-access,
-    -misc-non-private-member-variables-in-classes,
     -hicpp-vararg,
     -hicpp-no-array-decay,
     -hicpp-signed-bitwise,
-    -bugprone-easily-swappable-parameters
+    -hicpp-uppercase-literal-suffix,
+    -readability-identifier-length,
+    -readability-uppercase-literal-suffix,
+    -readability-magic-numbers,
+    -modernize-use-trailing-return-type,
+    -misc-non-private-member-variables-in-classes,
+    -bugprone-easily-swappable-parameters,
     -*-avoid-c-arrays
     '
     
