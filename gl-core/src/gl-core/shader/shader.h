@@ -32,15 +32,26 @@ class Shader {
     void Bind() const { glUseProgram(id_); }
     static void Unbind() { glUseProgram(0); }
 
-    void SetInt(const std::string& name, int value) const {
+    void SetInt(const std::string& name, int32_t value) const {
         GLint location = glGetUniformLocation(id_, name.c_str());
         glUniform1i(location, value);
     }
 
-    void SetIntArray(const std::string& name, int* values,
+    void SetUint(const std::string& name, uint32_t value) const {
+        GLint location = glGetUniformLocation(id_, name.c_str());
+        glUniform1ui(location, value);
+    }
+
+    void SetIntArray(const std::string& name, int32_t* values,
                      uint32_t count) const {
         GLint location = glGetUniformLocation(id_, name.c_str());
         glUniform1iv(location, (GLsizei)count, values);
+    }
+
+    void SetUintArray(const std::string& name, uint32_t* values,
+                      uint32_t count) const {
+        GLint location = glGetUniformLocation(id_, name.c_str());
+        glUniform1uiv(location, (GLsizei)count, values);
     }
 
     void SetFloat(const std::string& name, float value) const {

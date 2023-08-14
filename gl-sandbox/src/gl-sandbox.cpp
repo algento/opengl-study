@@ -14,17 +14,17 @@
 #include "gl-core/glpch.h"
 #include "gl-core/shader/shader.h"
 
-unsigned int CompileShader(unsigned int type, const std::string& source) {
-    unsigned int id = glCreateShader(type);
+uint32_t CompileShader(uint32_t type, const std::string& source) {
+    uint32_t id     = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
 
-    int result = 0;
+    int32_t result = 0;
     //* i: integer, v: vector
     glGetShaderiv(id, GL_COMPILE_STATUS, &result);
     if (result == GL_FALSE) {
-        int length = 0;
+        int32_t length = 0;
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
         // char message[length]; //! 이렇게 하면 오류발생, 힙에 생성해서 해결할 수도 있지만 스택에 생성하려면 이렇게 해야한다.
         char* message = (char*)alloca(length * sizeof(char));
@@ -39,11 +39,11 @@ unsigned int CompileShader(unsigned int type, const std::string& source) {
     return id;
 }
 
-unsigned int CreateShader(const std::string& vertexShader,
-                          const std::string& fragmentShader) {
-    unsigned int program = glCreateProgram();
-    unsigned int vs      = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs      = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+uint32_t CreateShader(const std::string& vertexShader,
+                      const std::string& fragmentShader) {
+    uint32_t program = glCreateProgram();
+    uint32_t vs      = CompileShader(GL_VERTEX_SHADER, vertexShader);
+    uint32_t fs      = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
     glAttachShader(program, vs);
     glAttachShader(program, fs);
@@ -60,7 +60,7 @@ unsigned int CreateShader(const std::string& vertexShader,
     return program;
 }
 
-int main(int argc, char** argv) {  //NOLINT
+int32_t main(int32_t argc, char** argv) {  //NOLINT
     GLFWwindow* window = nullptr;
 
     /* (GLFW) GLFW 초기화*/
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {  //NOLINT
 
     /* (GLAD) GLAD 초기화 */
     gladLoadGL();
-    // int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    // int32_t status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     // if (status == 0) {
     //     std::cout << "Failed to initialize GLAD" << std::endl;
     //     return -1;
@@ -145,7 +145,7 @@ int main(int argc, char** argv) {  //NOLINT
     glcore::Shader shader("basic", vertexShader, fragmentShader);
     shader.Bind();
 
-    // unsigned int shader = CreateShader(vertexShader, fragmentShader);
+    // uint32_t shader = CreateShader(vertexShader, fragmentShader);
     // glUseProgram(shader);
 
     /* 랜더링 루프 --------------------------------------------------------------*/

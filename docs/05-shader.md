@@ -64,7 +64,7 @@ void glGetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei* length, GLcha
 // (https://docs.gl/gl4/glGetShaderInfoLog)
 // - shader: 쉐이더 객체의 핸들
 // - maxLength: 로그를 저장할 문자열 버퍼의 최대 크기
-// - length: infoLog에 전달받은 문자열 버퍼의 크기를 저장할 int 변수 포인터
+// - length: infoLog에 전달받은 문자열 버퍼의 크기를 저장할 int32_t 변수 포인터
 // - infoLog: OpenGL에서 전달받은 문자열 배열의 시작 주소
 
 void glGetShaderiv(GLuint shader, GLenum pname, GLint *params);
@@ -78,7 +78,7 @@ void glGetShaderiv(GLuint shader, GLenum pname, GLint *params);
 //  - GL_INFO_LOG_LENGTH: INFO_LOG에 있는 글자수를 반환
 //    - 해당 길이만크 메모리를 할당하고 glGetShaderInfoLog를 이용해서 로그 정보를 가져올 수 있다.
 //  - GL_SHADER_SOURCE_LENGTH: 소스코드 길이를 반환
-// - params: 파라미터를 받아올 int 변수 포인터
+// - params: 파라미터를 받아올 int32_t 변수 포인터
 
 void glUseProgram(GLuint program);
 // (https://docs.gl/gl4/glUseProgram)

@@ -103,7 +103,7 @@ void glVertexAttribPointer(GLuint index, GLint size, GLenum type,
 // - index: vertex attribute index, shader의 layout과 연과된다.
 // - size: 데이터의 사이즈가 아니라 attribute가 가지는 컴포넌트의 개수이다. 
 //         1~4의 값을 가진다. (예를 들어 Float 2개로 이루어진 벡터이면, 2가 들어간다.)
-// - type: 데이터의 type (int, float 등)
+// - type: 데이터의 type (int32_t, float 등)
 // - normalized: 픽셀 값을 입력할 때, float은 0~1사이의 값을 가져야 하므로 
 //               이렇게 데이터 변환이 필요한 경우만 true로 입력한다.
 // - stride: 각 Vertex는 여러 attribute을 가지며, 그에 따른 크기를 가진다.

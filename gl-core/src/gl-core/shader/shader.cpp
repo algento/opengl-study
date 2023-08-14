@@ -134,7 +134,7 @@ void Shader::Compile(
     std::unordered_map<GLuint, std::string>& pipeline_shader_sources) {
     auto program = glCreateProgram();
     std::array<uint32_t, 2> shader_ids{0, 0};  // vertex, fragment only
-    int index = 0;
+    int32_t index = 0;
 
     for (auto& kv : pipeline_shader_sources) {
         GLenum type               = kv.first;
@@ -171,7 +171,7 @@ void Shader::Compile(
 
     // check link error
     GLint is_linked = 0;
-    glGetProgramiv(program, GL_LINK_STATUS, (int*)&is_linked);
+    glGetProgramiv(program, GL_LINK_STATUS, (int32_t*)&is_linked);
     glValidateProgram(id_);
     if (is_linked == GL_FALSE) {
         GLint maxLength = 0;

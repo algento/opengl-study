@@ -9,6 +9,7 @@
  * 
  */
 #pragma once
+
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -21,6 +22,11 @@
 #include <unordered_map>
 #include <vector>
 
-#ifdef GLCORE_PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
     #include <Windows.h>
+#endif
+#if defined(PLATFORM_LINUX) || defined(PLATFORM_APPLE)
+    #include <sys/stat.h>
+    #include <sys/types.h>
+    #include <unistd.h>
 #endif

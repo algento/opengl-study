@@ -56,7 +56,7 @@ typedef void (*GL_GENBUFFERS) (GLsizei, GLuint*);
 // find the function and assign it to a function pointer
 GL_GENBUFFERS glGenBuffers  = (GL_GENBUFFERS)wglGetProcAddress("glGenBuffers");
 // function can now be called as normal
-unsigned int buffer;
+uint32_t buffer;
 glGenBuffers(1, &buffer);
 
 ```
@@ -73,7 +73,7 @@ glfwMakeContextCurrent(window);
 // GLAD 로딩 (내 하드웨어에 맞는 OpenGL)
 gladLoadGL();
 /* GLFW에 맞는 GLAD를 로딩한다.
-int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+int32_t status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 if (status == 0) {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;

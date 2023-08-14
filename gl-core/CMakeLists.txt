@@ -30,6 +30,7 @@ target_include_directories(gl-core PUBLIC
     ${GLM_INCLUDE_DIRS}
     ${GLFW3_INCLUDE_DIRS}
     ${IMGUI_INCLUDE_DIRS}
+    ${GLCORE_SRC_DIR}
 )
 
 target_link_libraries(gl-core PUBLIC 
