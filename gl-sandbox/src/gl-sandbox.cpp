@@ -12,6 +12,8 @@
 #include <glad/glad.h>
 
 #include "gl-core/glpch.h"
+#include "gl-core/renderer/vertex_array.h"
+#include "gl-core/renderer/vertex_buffer.h"
 #include "gl-core/shader/shader.h"
 
 uint32_t CompileShader(uint32_t type, const std::string& source) {
@@ -102,51 +104,21 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     /* VBO -------------------------------------------------------------------*/
-    GLuint vbo = 0;         // vbo 버퍼 핸들 생성
-    glGenBuffers(1, &vbo);  // 핸들을 입력받아 1개의 버퍼를 만든다.
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);  // vbo 핸들에 타입을 바인딩한다.
-
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,  // left
         0.0f,  0.5f,  0.0f,  // top
         0.5f,  -0.5f, 0.0f   // right
     };
-
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), &vertices[0],
-                 GL_STATIC_DRAW);  // 바인딩딘 버퍼에 데이터를 복사한다.
+    auto vbo = glcore::VertexBuffer::Create((void*)vertices, 9 * sizeof(float));
+    vbo->SetLayout({{"a_Position", glcore::GlDataType::Float3}});
 
     /* VAO -------------------------------------------------------------------*/
-    GLuint vao = 0;              // vao 핸들 생성
-    glGenVertexArrays(1, &vao);  // 핸들을 입력받아 1개의 vao를 만든다.
-    glBindVertexArray(vao);  // vao를 바인딩해서 current VAO로 만든다.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
-
-    // 해당 VAO와 VBO를 수정하지 않도록 0으로 바인딩한다.
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    auto vao = glcore::VertexArray::Create();
+    vao->SetVertexBuffer(vbo);
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
-    // glcore::Shader shader("../gl-sandbox/assets/shaders/basic.glsl");
-    // shader.Bind();
-
-    std::string vertexShader =
-        R"(#version 330 core
-        layout(location = 0) in vec3 a_Position;
-        void main() {
-           gl_Position = vec4(a_Position, 1.0);
-        })";
-    std::string fragmentShader =
-        R"(#version 330 core
-        layout(location = 0) out vec4 color;
-        void main() {
-           color = vec4(1.0, 0.0, 0.0, 1.0);
-        })";
-    glcore::Shader shader("basic", vertexShader, fragmentShader);
+    glcore::Shader shader("../gl-sandbox/assets/shaders/basic.glsl");
     shader.Bind();
-
-    // uint32_t shader = CreateShader(vertexShader, fragmentShader);
-    // glUseProgram(shader);
 
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
@@ -157,7 +129,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* OpenGL이 해당 vao를 사용하도록, vao를 바인딩 */
-        glBindVertexArray(vao);
+        vao->Bind();
 
         /* 삼각형 그리기*/
         glDrawArrays(GL_TRIANGLES, 0, 3);

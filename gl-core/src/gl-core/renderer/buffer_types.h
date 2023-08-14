@@ -10,9 +10,9 @@
  */
 
 #pragma once
-
+#include "gl-core/glpch.h"
 namespace glcore {
-enum class GlDataType {
+enum class GlDataType : uint32_t {
     None = 0,
     Float,
     Float2,
@@ -70,12 +70,12 @@ struct GlBufferElement {
     bool normalized{false};
 
     GlBufferElement() = default;
-    GlBufferElement(GlDataType type, std::string name, bool normalized = false)
+    GlBufferElement(std::string name, GlDataType type, bool normalized = false)
         : name(std::move(name)),
           type(type),
           size(GetDataTypeSize(type)),
           normalized(normalized) {}
-    [[nodiscard]] uint32_t GetComponentCount() const {
+    [[nodiscard]] int32_t GetComponentCount() const {
         // #lizard forgives the complexity
         switch (type) {
             case GlDataType::Float:
@@ -115,7 +115,7 @@ class GlBufferLayout {
         UpdateStride();
     }
 
-    [[nodiscard]] uint32_t GetStride() const { return stride_; }
+    [[nodiscard]] int32_t GetStride() const { return stride_; }
     [[nodiscard]] const std::vector<GlBufferElement>& GetElements() const {
         return elements_;
     }
@@ -144,11 +144,11 @@ class GlBufferLayout {
         if (elements_.empty()) {
             return;
         }
-        stride_ = elements_.back().size;
+        stride_ = static_cast<int32_t>(elements_.back().size);
     }
 
     std::vector<GlBufferElement> elements_{};
-    uint32_t stride_{0};
+    int32_t stride_{0};
 };
 
 }  // namespace glcore
