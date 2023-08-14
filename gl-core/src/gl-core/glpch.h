@@ -9,12 +9,16 @@
  * 
  */
 #pragma once
+#include <cassert>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 //
+#include <array>
 #include <functional>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #ifdef GLCORE_PLATFORM_WINDOWS

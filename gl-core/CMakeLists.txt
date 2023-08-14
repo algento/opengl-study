@@ -16,7 +16,7 @@ find_package(glm REQUIRED PATHS ${3RDPARTY_DIR}/glm/lib/cmake/glm)
 find_package(fmt REQUIRED)
 set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR}/stb_image)
 
-file(GLOB_RECURSE GLCORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE GLCORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/gl-core/*.cpp")
 
 add_library(gl-core STATIC
     ${GLCORE_SOURCES}
@@ -40,7 +40,7 @@ target_link_libraries(gl-core PUBLIC
 )
 
 target_precompile_headers(gl-core PRIVATE
-    ${GLCORE_SRC_DIR}/glpch.h
+    ${GLCORE_SRC_DIR}/gl-core/glpch.h
 )
 
 set(GLCORE_COMPILE_DEFINITIONS 
