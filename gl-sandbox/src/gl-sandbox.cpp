@@ -12,55 +12,10 @@
 #include <glad/glad.h>
 
 #include "gl-core/glpch.h"
+#include "gl-core/renderer/index_buffer.h"
 #include "gl-core/renderer/vertex_array.h"
 #include "gl-core/renderer/vertex_buffer.h"
 #include "gl-core/shader/shader.h"
-
-uint32_t CompileShader(uint32_t type, const std::string& source) {
-    uint32_t id     = glCreateShader(type);
-    const char* src = source.c_str();
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);
-
-    int32_t result = 0;
-    //* i: integer, v: vector
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-    if (result == GL_FALSE) {
-        int32_t length = 0;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        // char message[length]; //! 이렇게 하면 오류발생, 힙에 생성해서 해결할 수도 있지만 스택에 생성하려면 이렇게 해야한다.
-        char* message = (char*)alloca(length * sizeof(char));
-        glGetShaderInfoLog(id, length, &length, message);
-        std::cout << "Failed to compile shader! "
-                  << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << "\n";
-        std::cout << message << std::endl;
-        glDeleteShader(id);
-        return 0;
-    }
-
-    return id;
-}
-
-uint32_t CreateShader(const std::string& vertexShader,
-                      const std::string& fragmentShader) {
-    uint32_t program = glCreateProgram();
-    uint32_t vs      = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    uint32_t fs      = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-
-    //* glDetachShader를 실행할 수도 반드시 필요한 것은 아니다.
-    //* 또한 이것을 실행하면, GPU에서 실행되는 Shader에 대한 디버깅 정보를 잃는다
-
-    glValidateProgram(program);
-
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-
-    return program;
-}
 
 int32_t main(int32_t argc, char** argv) {  //NOLINT
     GLFWwindow* window = nullptr;
@@ -104,17 +59,30 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     /* VBO -------------------------------------------------------------------*/
+    // r3 ----- r2
+    // |         |
+    // r0 ----- r1
+    // clang-format off
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,  // left
-        0.0f,  0.5f,  0.0f,  // top
-        0.5f,  -0.5f, 0.0f   // right
+        -0.5f, -0.5f, 0.0f, // r0
+        0.5f, -0.5f, 0.0f, // r1
+        0.5f, 0.5f, 0.0f, // r2
+        -0.5f, 0.5f, 0.0f // r3
     };
-    auto vbo = glcore::VertexBuffer::Create((void*)vertices, 9 * sizeof(float));
+    // clang-format on
+    auto vbo = glcore::VertexBuffer::Create((void*)vertices, sizeof(vertices));
     vbo->SetLayout({{"a_Position", glcore::GlDataType::Float3}});
 
+    uint32_t indices[] = {
+        0, 1, 2,  // triangle 1, counter-clockwise
+        2, 3, 0   // triangle 2, counter-clockwise
+
+    };
+    auto ibo = glcore::IndexBuffer::Create(indices, 6);
     /* VAO -------------------------------------------------------------------*/
     auto vao = glcore::VertexArray::Create();
     vao->SetVertexBuffer(vbo);
+    vao->SetIndexBuffer(ibo);
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
     glcore::Shader shader("../gl-sandbox/assets/shaders/basic.glsl");
@@ -131,8 +99,8 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         /* OpenGL이 해당 vao를 사용하도록, vao를 바인딩 */
         vao->Bind();
 
-        /* 삼각형 그리기*/
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        /* 사각형 그리기 그리기*/
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* (GLFW) front and back buffers를 스왑 */
         glfwSwapBuffers(window);

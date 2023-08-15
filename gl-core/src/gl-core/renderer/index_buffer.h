@@ -31,7 +31,7 @@ class IndexBuffer {
                                                uint32_t count);
 
  private:
-    uint32_t id_;
-    uint32_t count_;
+    uint32_t id_{0};
+    uint32_t count_{0};
 };
 }  // namespace glcore

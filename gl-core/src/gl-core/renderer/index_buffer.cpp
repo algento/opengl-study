@@ -8,7 +8,6 @@
  * @copyright Copyright (c) Sejong Heo 2023
  * 
  */
-#pragma once
 #include "gl-core/renderer/index_buffer.h"
 
 #include <_types/_uint32_t.h>
@@ -33,7 +32,8 @@ IndexBuffer::~IndexBuffer() { glDeleteBuffers(1, &id_); }
 void IndexBuffer::Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_); }
 void IndexBuffer::Unbind() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
 
-std::shared_ptr<IndexBuffer> Create(uint32_t* indices, uint32_t count) {
+std::shared_ptr<IndexBuffer> IndexBuffer::Create(uint32_t* indices,
+                                                 uint32_t count) {
     return std::make_shared<IndexBuffer>(indices, count);
 }
 }  // namespace glcore
