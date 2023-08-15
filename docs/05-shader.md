@@ -97,6 +97,10 @@ void glDeleteProgram(GLuint program);
 ## Vertex Shader
 
 - Vertex shader는 vertex마다 호출되며, 기본적으로 vertex가 어디에 위치하는지 등의 속성을 결정한다. Vertex shader는 VAO에서 전달된 정점 데이터를 입력받아 클립 공간에서의 정점 데이터를 출력한다.
+- Vertex shader가 가지는 built-in 변수는 다음과 같다.
+  - `gl_Position`
+  - `gl_PoitnSize`
+  - `gl_VertexID`
 
 ```c
 #version 330 core //Core 프로파일 버전 지정 (여기서는 3.30)
@@ -112,6 +116,10 @@ void main() {
 ## Fragment Shader
 
 - fragment shader는 rasterizer가 만들어준 프래그먼트 데이터(랜더링할 픽셀)을 입력받아 픽셀 별로 동작한다. 즉, 색깔을 그려야할 픽셀이 정해지면 fragment shader도 그 수만큼 동작해서 각 픽셀의 색을 계산한다.
+- Fragment shader가 가지는 built-in 변수는 다음과 같다.
+  - `gl_FragCoord`
+  - `gl_FontFacing`
+  - `gl_FragDepth`
 
 ```c
 #version 330 core
@@ -122,3 +130,7 @@ void main() {
     color = vec4(1.0, 0.0, 0.0, 1.0); // red
 }
 ```
+
+## Reference
+
+1. [LearnOpenGL-Advanced GLSL](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL)

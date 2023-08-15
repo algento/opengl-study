@@ -113,6 +113,45 @@ void glVertexAttribPointer(GLuint index, GLint size, GLenum type,
 void glGetAttribLocation()
 ```
 
+## Uniform
+
+- GPU에 데이터를 전달하는 다른 방법으로 uniform이 있다. 정점 속성을 통해 CPU의 메모리를 GPU의 메모리로 데이터를 전달했다면, uniform은 애플리케이션이 직접 쉐이더에 글로벌 변수의 형태로 데이터를 전달할 수 있으며,이는 전달한 데이터를 파이프라인의 모든 단계에서 접근가능하다는 의미이다.
+- 정점 속성은 위치, 법선 벡터 방향, 텍스쳐 좌표 등의 정점 별로 필요한 데이터인데 반해 유니폼은 전체 프리미티브들을 대규모로 랜더링하는 동안 변하지 않고 균일하게 남아있는 데이터를 GPU에 전달하는 형태로 많이 활용된다.
+- 유니폼은 항상 상수로 간주되므로 쉐이더 코드 내에서 할당할 수 없지만 기본값은 넣을 수 있다는 점을 알아두자
+- 디폴트 블록에 선언하는 방식과 유니폼 블록에 선언하는 2가지 방식이 있다.
+
+### Default Block
+
+- 디폴트 블록 유니폼을 선언하는 방식은 변수 앞에 `uniform` 키워드를 넣는 것이다.
+- 정점 속성과 동일하게 쉐이더 코드 내에서 레이아웃 위치를 지정할 수 있지만 특별히 지정하지 않을 경우, OpenGL이 자동으로 할당하며 `glGetUniformLocation()`으로 해당 레이아웃 위치를 확인할 수 있다. 유니폼의 타입에 따라 `glUniform*()` 함수를 사용해서 값을 입력한다. 벡터나 행렬을 전달할 수도 있으며, 행렬의 경우 OpenGL이 선호하는 column-wise로 데이터가 저장되어 있음에 유의하자. 일반적인 경우는 row-wise로 행렬 데이터를 저장하므로 glm이 아닌 수학 라이브러리를 사용할 경우 데이터 저장순서를 확인하고 column-wise가 아니면 OpenGL에 맞게 변형해주어야 한다.
+  
+```c++
+layout(location = 0) out vec4 color;
+// layout(location = 17 ) uniform vec4 u_Color; // case(1)
+uniform vec4 u_Color; // case(2)
+
+void main()
+{
+    color = u_Color;
+};
+//----------------//
+GLint uColorLocation = glGetUniformLocation(shaderProgram, "u_Color");
+glUniform4f(uColorLocation, 0.2f, 0.3f, 0.8f, 1.0f);
+```
+
+```c++
+GLint glGetUniformLocation( GLuint program, const GLchar *name);
+
+void glUniform*(GLuint location, parameters...)
+
+```
+
+### Uniform Block
+
+- 만약 아주 복잡한 쉐이더를 작성하게 된다면, 많은 상수 데이터가 필요하기 때문이 이를 한번에 하나씩 CPU에서 GPU로 전달하는 것은 비효율적인 일이다. 따라서 `glUniform*()` 함수를 매번 호출하는 성능저하를 막고 유니폼을 더 쉽게 공유하기 위해 유니폼 블록이 제공되고 이를 다루는 버퍼 객체를 Uniform Buffer Object (UBO)라 한다.
+
+<!-- TOOD: OpenGL Super Bible 5.2.2 (p127) 정리하자. -->
+
 ## Vertex Array Object (VAO)
 
 - VAO는 OpenGL 파이프라인의 정점 패치 (vertex fetch) 스테이지를 나타내는 객체이며, 최초 입력인 정점 정보를 Veretx Shader에 공급한다. 즉, 화면을 그리기 전에 VAO를 생성해서 정점 정보를 넣어줘야만 Modern OpenGL이 정상적으로 화면을 그릴 수 있다.
