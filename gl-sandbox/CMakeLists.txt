@@ -8,7 +8,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
 
 find_package(OpenGL REQUIRED)
+## glfw3 -----------##
 find_package(glfw3 REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3)
+# include(${3RDPARTY_DIR}/glfw/lib/cmake/glfw3/glfw3Config.cmake)
+set(GLFW3_LIBRARIES glfw)
+get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
+
 # find_package(spdlog REQUIRED PAHTS ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog)
 # find_package(imgui REQUIRED PAHTS ${3RDPARTY_DIR}/imgui/lib/cmake/imgui)
 # find_package(glad REQUIRED PAHTS ${3RDPARTY_DIR}/glad/lib/cmake/glad)

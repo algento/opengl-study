@@ -81,6 +81,30 @@ if (status == 0) {
 */
 ```
 
+## Rendering Window
+
+- glViewport(..)
+  - 스크린 좌표로 변환?
+  - 창의 크기가 변하면, 뷰포트도 조정해야 함.
+  - 뷰포트 변화에 따라 프레임버퍼를 변경할 수 있도록 콜백 설정
+    - 콜백 함수
+      - void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    - 콜백 설정
+      - glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+- glfwWindowShouldClose(window)
+  - 윈도우 종료 명령이 내려졌는지 확인
+- glfwSwapBuffers(window)
+  - double buffer 랜더링 사용
+    - back buffer: 화면에 출력하는 데이터
+    - front buffer: 화면 출력 전에 미리 계산된 출력 데이터
+- glfwPollEvent()
+  - 이벤트 발생했는지 확인하고 윈도우 상태를 업데이트하고 콜백함수 호출
+
+## Terminating Window
+
+- glfwTerminate()
+  - 윈도우 객체가 생성되지 않을 경우, 호출하여 GLFW 종료
+
 ## Reference
 
 1. [Anton Gerdealn - "Hello Triangle"](https://antongerdelan.net/opengl/hellotriangle.html)

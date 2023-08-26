@@ -25,13 +25,16 @@
 1. [Jayanam's Modern OpenGL Samples](https://github.com/jayanam/jgl_demos)
 1. [ThinMatrix's OpenGL 3D Game Tutorial](https://www.youtube.com/playlist?list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP)
 1. [OpenGL 4.5 스터디](https://rvalueref.tistory.com/category/OpenGL)
+1. [GLSL Tutorial](https://www.opentutorials.org/module/3659)
+1. [goden's 대학교 OpenGL 스터디](https://goeden.tistory.com/category/College%20Study/OpenGL)
+1. [Computer Graphics W/OpenGL](https://github.com/geoo993/ComputerGraphicsWithOpenGL)
 
 ### Lecture
 
 1. [Virtual Reality (Stanford)](https://stanford.edu/class/ee267/)
 1. [Udemy: Modern OpenGL C++ 3D Game Tutorial Series & 3D Rendering](https://www.udemy.com/course/opengl-tutorials/?LSNPUBID=p4oHS4cJv*k&siteID=p4oHS4cJv.k-UuZ1llTGog7Wk4KBf.RwFg&utm_source=adwords&utm_medium=udemyads&utm_campaign=DSA_Catchall_la.EN_cc.ROW&utm_content=deal4584&utm_term=_._ag_88010211481_._ad_535397282064_._kw__._de_c_._dm__._pl__._ti_dsa-841699838863_._li_1009886_._pd__._&matchtype=&gclid=CjwKCAiAjs2bBhACEiwALTBWZSHUs14A5ANh020wiBDUhCL6CXb5Ih5mtjXzlarFmgu8hI5eWverJBoCmC0QAvD_BwE)
    - [github](https://github.com/PacktPublishing/Modern-OpenGL-C-3D-Game-Tutorial-Series-3D-Rendering/tree/master/Modern-OpenGL-Tutorials-master)
-2. [Intro. to Computer Graphics (2018) [MIT]](https://www.youtube.com/playlist?list=PLQ3UicqQtfNthIjEQewciei85O2OCapZp)
+1. [Intro. to Computer Graphics (2018) [MIT]](https://www.youtube.com/playlist?list=PLQ3UicqQtfNthIjEQewciei85O2OCapZp)
 
 ### Books
 
@@ -41,6 +44,8 @@
 1. Computer Graphics Programming in OpenGL with C++
 1. [OpenGL로 배우는 3차원 그래픽스](https://carrido-hobbies-well-being.tistory.com/category/Graphic)
 1. [OpenGL Programming Gitbook](https://en.wikibooks.org/wiki/OpenGL_Programming#Modern_OpenGL)
+1. [The Book of Shader](https://thebookofshaders.com)
+1. [Learning Modern 3D Graphics Programming](https://paroj.github.io/gltut/index.html)
 
 ### Etc
 
@@ -51,3 +56,4 @@
 1. [OGL-dev](https://ogldev.org)
 1. [3D Graphics w/OpenGL](https://www3.ntu.edu.sg/home/ehchua/programming/opengl/CG_BasicsTheory.html)
     - [3D Graphics with OpenGL by Example](https://www3.ntu.edu.sg/home/ehchua/programming/opengl/CG_Examples.html)
+1. [C++ library for modern OpenGL experiments](https://github.com/tksuoran/erhe/tree/main)

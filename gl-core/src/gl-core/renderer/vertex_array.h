@@ -30,11 +30,10 @@ class VertexArray {
     void SetVertexBuffer(const std::shared_ptr<VertexBuffer>& vertex_buffer);
     void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& index_buffer);
 
-    [[nodiscard]] const std::shared_ptr<VertexBuffer>& GetVertexBuffers()
-        const {
+    [[nodiscard]] const std::shared_ptr<VertexBuffer>& vertex_buffer() const {
         return vertex_buffer_;
     }
-    [[nodiscard]] const std::shared_ptr<IndexBuffer>& GetIndexBuffer() const {
+    [[nodiscard]] const std::shared_ptr<IndexBuffer>& index_buffer() const {
         return index_buffer_;
     }
 
