@@ -13,11 +13,21 @@
 - Modern OpenGL에서는 현대 그래픽스 하드웨어로 가속성능을 이용하는 core profile과 구버전을 지원하기 위한 Compatability profile로 구분되었고 호환성 프로파일은 1.0부터 현재까지의 모든 버전과의 호환성을 지원한다.
 - 일반적으로 core profile만을 다루므로 호환성 프로파일을 사용하는 경우는 별도로 공부를 해야한다. core-profile의 경우 사양서를 기반으로 현대적으로 재작성했기 때문에 어렵지만 효율적이며, 구버전을 지원하는 immediate mode를 사용하는 경우 사용 및 이해가 쉽지만 비효율적이다.
 - OpenGL은 새로운 기술이 등장할 때마다 이를 활용할 수 있도록 확장을 제공한다.
-
-## Helper
-
-- OpenGL 기능과 연관된 function은 Graphic 카드 드라이버에 구현되어 있다. 하지만 이것을 직접 불러와 실행시키려면, 운영체제와 그래픽 카드제조사의 사양에 영향을 받게 된다. 따라서 이런 Graphic 기능을 공통을 인터페이스로 손쉽게 사용할 수 있도록 포장한 것이 glew (OpenGL Extention Wrangler Library)나 glad이다.
 - Modern OpenGL이 구 OpenGL과 가지는 가장 큰 차이점은 shader이다. 기존의 OpenGL이 가지고 있던 비효율적인 랜더링 지원 함수를 삭제하고 shader를 이용해서 효율높은 랜더링을 수행하는 것이 가능하다.
+
+## OpenGL Wrangler
+
+- OpenGL 기능과 연관된 function은 Graphic 카드 드라이버에 구현되어 있다. 하지만 이것을 직접 불러와 실행시키려면, 운영체제와 그래픽 카드제조사의 사양에 영향을 받게 된다. 따라서 이런 Graphic 기능을 공통을 인터페이스로 손쉽게 사용할 수 있도록 포장한 것이 OpenGL Extension Wrangler이다.
+- OpenGL Extention Wrangler는 OpenGL에 대한 interface와 platform specific한 OpenGL extension 의 loadingdmf 지원한다. OpenGL은 사양이기 때문에 그래픽카드 구현과 platform specific한 extension을 일일이 확인하여 사용하는 것은 매우 고된 일이다. 따라서 wrangler가 자동으로 이런 것들을 처리해주기 때문에 매우 유용하기 때문에 기본적으로 사용된다. 대표적인 라이브러리로 glew (OpenGL Extention Wrangler Library)나 glad, SDL e둥이 있으며 glew가 가장 많이 사용되었지만 최근에는 glad도 많이 사용되고 있다.
+
+### GLEW
+
+### GLAD
+
+## OpenGL Framework
+
+- OpenGL을 이용하여 platform에 맞게 윈도우를 생성하고 제어하는 것을 돕는 기능을 하는 framework들이 존재한다. 윈도우를 생성하며 해당 윈도우에 대한 OpenGL context를 제공하며, 다양한 기능들 (키보드/마우스/패드 입력, 오디오, 다중 모니터 지원 등)을 지원한다.
+- 대표적인 OpenGL Framework 라이브러리로는 glfw와 SDL이 있으며, SDL이 더 무거운 대신 더 많은 기능들 (audio supprot, threading, filesystem, etc.)을 지원한다. 이런 이유때문에 SDL은 인디게임이나 인디 게임엔지 개발에 많이 사용되었다. (CryEngine, SourceEngine, Amnesia, Dying Light, etc.)
 
 ## GPU
 

@@ -46,8 +46,6 @@ glfwMakeContextCurrent(window);
 
 ## GLAD
 
-- GLAD
-
 - OpenGL은 실제로 인터페이스일 뿐이므로 특정 그래픽 카드가 지원하는 드라이버에 사양을 구현하는 것은 드라이버 제조업체에 달려있다. 또한 OpenGL 드라이버에 여러 가지 다른 버전들이 있으므로 함수 대부분의 위치는 컴파일 타임(compile-time)에 알 수 없고 런타임(run-time)에 필요한 함수의 위치를 검색하고 이후에 사용을 위해 함수 포인터로 함수를 저장해두어야 한다.함수의 위치를 검색하는 것은 운영체제마다 다르며 (OS-specific), 윈도우는 다음과 같은 과정을 거친다.
 
 ```c++
@@ -79,6 +77,28 @@ if (status == 0) {
     return -1;
 } 
 */
+```
+
+## GLEW
+
+- GLAD보다도 많이 사용되는 Wrangler 라이브러리인 GLEW는 pre-build된 라이브러리를 사용하거나 직접 소스를 다운받아서 빌드해서 사용해야 한다. 주의할 점은 github에서 다운받아서 빌드하면 include 헤더가 없기 때문에 빌드가 되지 않으니 github clone이 아니라 github page에서 제공하는 zip 파일을 다운받아서 빌드해야 한다.
+- glewGetErrorString()으로 error를 확인할 수 있다.
+- 특정 extension이 있는지 확인할 수 있다.
+  
+```c++
+...
+// Allow modern extension features
+glewExperimental = GL_TRUE;
+if (glewInit() != GLEW_OK) {
+    std::cout << "GLEW initialisation failed!"
+              << "\n";
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return 1;
+}
+if (!GLEW_EXT_framebuffer_object){
+  ...
+}
 ```
 
 ## Rendering Window
