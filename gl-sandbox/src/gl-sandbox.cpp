@@ -9,7 +9,11 @@
  * 
  */
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#if GLCORE_USE_GLEW
+    #include <GL/glew.h>
+#else
+    #include <glad/glad.h>
+#endif
 
 #include "gl-core/glpch.h"
 #include "gl-core/renderer/index_buffer.h"
@@ -22,11 +26,14 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
     /* (GLFW) GLFW 초기화*/
     if (glfwInit() == GLFW_FALSE) {
+        std::cout << "Failed to initialize GLFW" << std::endl;
+        glfwTerminate();
         return -1;
     }
 
     /* (GLFW) 윈도우 힌트 지정 */
     glfwWindowHint(GLFW_SAMPLES, 4);  // 4x Antialiasing
+
 #if defined(PLATFORM_WINDOWS)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPACT_PROFILE);
 #elif defined(PLATFORM_UNIX)
@@ -39,6 +46,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
+    /* (GLFW) 윈도우 생성 */
     window = glfwCreateWindow(640, 480, "Test", nullptr, nullptr);
     if (window == nullptr) {
         glfwTerminate();
@@ -47,12 +55,24 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     glfwMakeContextCurrent(window);
 
     /* (GLAD) GLAD 초기화 */
+#if GLCORE_USE_GLEW
+    // Allow modern extension features
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) {
+        std::cout << "GLEW initialisation failed!"
+                  << "\n";
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return 1;
+    }
+#else
     gladLoadGL();
     // int32_t status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     // if (status == 0) {
     //     std::cout << "Failed to initialize GLAD" << std::endl;
     //     return -1;
     // }
+#endif
 
     std::cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << "\n";
     std::cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << "\n";

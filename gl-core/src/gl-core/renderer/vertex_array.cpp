@@ -10,7 +10,11 @@
  */
 #include "gl-core/renderer/vertex_array.h"
 
-#include <glad/glad.h>
+#if GLCORE_USE_GLEW
+    #include <GL/glew.h>
+#else
+    #include <glad/glad.h>
+#endif
 
 #include "gl-core/renderer/buffer_types.h"
 

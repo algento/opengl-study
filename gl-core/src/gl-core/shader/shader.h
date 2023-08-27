@@ -10,7 +10,11 @@
  */
 
 #pragma once
-#include <glad/glad.h>
+#if GLCORE_USE_GLEW
+    #include <GL/glew.h>
+#else
+    #include <glad/glad.h>
+#endif
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

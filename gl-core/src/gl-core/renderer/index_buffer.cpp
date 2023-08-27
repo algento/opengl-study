@@ -10,8 +10,11 @@
  */
 #include "gl-core/renderer/index_buffer.h"
 
-#include <_types/_uint32_t.h>
-#include <glad/glad.h>
+#if GLCORE_USE_GLEW
+    #include <GL/glew.h>
+#else
+    #include <glad/glad.h>
+#endif
 namespace glcore {
 IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count) {
     // OpenGL Buffer를 생성하고 바인딩한다.
