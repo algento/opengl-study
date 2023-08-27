@@ -1,39 +1,42 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 project(gl-core)
 
-## Settings ------------------------------------------------------------------##
+## CMake Settings-------------------------------------------------------------##
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
+# set(CMAKE_FIND_ROOT_PATH ${3RDPARTY_DIR}) # for find_package 
+# set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE "ONLY") # for find_package, no search in system paths
 
+## Dependencies --------------------------------------------------------------##
+## opengl -----------##
 find_package(OpenGL REQUIRED)
-
+## fmt -----------##
+find_package(fmt REQUIRED)
 ## glfw3 -----------##
-# find_package(glfw3 REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3)
-include(${3RDPARTY_DIR}/glfw/lib/cmake/glfw3/glfw3Config.cmake)
+set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3) # To use library in 3rdparty
+find_package(glfw3 CONFIG REQUIRED )
+# find_package(glfw3 CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw)
 set(GLFW3_LIBRARIES glfw)
 get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
-
 ## glad -----------##
-# find_package(glad REQUIRED PATHS ${3RDPARTY_DIR}/glad/lib/cmake/glad)
-include(${3RDPARTY_DIR}/glad/lib/cmake/glad/glad-config.cmake)
-
+set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glad/lib/cmake/glad)
+find_package(glad CONFIG REQUIRED)
 ## glm -----------##
-# find_package(glm REQUIRED PATHS ${3RDPARTY_DIR}/glm/lib/cmake/glm)
-include(${3RDPARTY_DIR}/glm/lib/cmake/glm/glm-config.cmake)
-
+set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glm/lib/cmake/glm)
+find_package(glm CONFIG REQUIRED)
 ## imgui -----------##
-# find_package(imgui REQUIRED PATHS ${3RDPARTY_DIR}/imgui/lib/cmake/imgui)
-include(${3RDPARTY_DIR}/imgui/lib/cmake/imgui/imgui-config.cmake)
+set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/imgui/lib/cmake/imgui)
+find_package(imgui CONFIG REQUIRED)
 
 ## glew -----------##
-# find_package(glew REQUIRED PATHS ${3RDPARTY_DIR}/glew/lib/cmake/glew)
-include(${3RDPARTY_DIR}/glew/lib/cmake/glew/glew-config.cmake)
+set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glew/lib/cmake/glew)
+find_package(glew CONFIG REQUIRED)
 
-# find_package(spdlog REQUIRED PATHS ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog)
-
-# find_package(fmt REQUIRED)
+## spdlog -----------##
+set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog)
+find_package(spdlog CONFIG REQUIRED)
 
 ## Target ------------------------------------------------------------------##
 set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR}/stb_image)
@@ -46,19 +49,35 @@ set_target_properties(gl-core PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )
 
-target_include_directories(gl-core PUBLIC
+set(GLCORE_INCLUDE_DIR_LISTS 
+    ${GLCORE_SRC_DIR}
     ${GLAD_INCLUDE_DIRS} 
-    ${GLM_INCLUDE_DIRS}
     ${GLFW3_INCLUDE_DIRS}
     # ${IMGUI_INCLUDE_DIRS}
-    ${GLCORE_SRC_DIR}
+)
+if(USE_GLEW)
+    list(APPEND GLCORE_INCLUDE_DIR_LISTS 
+        ${GLCORE_INCLUDE_DIR_LISTS} ${GLEW_INCLUDE_DIRS})
+else()
+    list(APPEND GLCORE_INCLUDE_DIR_LISTS 
+        ${GLCORE_INCLUDE_DIR_LISTS} ${GLAD_INCLUDE_DIRS})
+endif()
+target_include_directories(gl-core PUBLIC
+    ${GLCORE_INCLUDE_DIR_LISTS} 
 )
 
-target_link_libraries(gl-core PUBLIC 
-    ${GLAD_LIBRARIES} 
+set(GLCORE_LIBRARY_LISTS 
     ${GLM_LIBRARIES}
     ${GLFW3_LIBRARIES}
     # ${IMGUI_LIBRARIES}
+)
+if(USE_GLEW)
+    list(APPEND GLCORE_LIBRARY_LISTS ${GLCORE_LIBRARY_LISTS} ${GLEW_LIBRARIES})
+else()
+    list(APPEND GLCORE_LIBRARY_LISTS ${GLCORE_LIBRARY_LISTS} ${GLAD_LIBRARIES})
+endif()
+target_link_libraries(gl-core PUBLIC 
+    ${GLCORE_LIBRARY_LISTS}
 )
 
 target_precompile_headers(gl-core PRIVATE
@@ -86,6 +105,13 @@ elseif(APPLE)
     )
 endif()
 
+if(USE_GLEW)
+    set(FLAG_GLEW 1)
+else()
+    set(FLAG_GLEW 0)
+endif()
+
 target_compile_definitions(gl-core PUBLIC
     ${GLCORE_COMPILE_DEFINITIONS}
+    GLCORE_USE_GLEW=${FLAG_GLEW}
 )

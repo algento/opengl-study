@@ -26,6 +26,8 @@ set(GLSANDBOX_SRC_DIR ${CMAKE_SOURCE_DIR}/gl-sandbox/src)
 #     set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}") # CMake 3.9+
 # endif()
 
+option(USE_GLEW "Use GLEW" OFF)
+
 ## Subdirectories ------------------------------------------------------------##
 add_subdirectory(gl-core)
 add_subdirectory(gl-sandbox)
