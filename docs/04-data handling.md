@@ -187,7 +187,8 @@ void glDeleteVertexArrays(GLsizei n, GLuint* arrays);
 ## Reference
 
 1. [VAO, VBO](https://rvalueref.tistory.com/6)-gl4.5 버전 설명
-2. [VAO, VBO 개념 정리](https://whilescape.tistory.com/entry/OpenGL-오픈지엘-데이터-관련-개념-정리1)
-3. [OpenGL 삼각형 그리기-VBO, VAO](https://kyoungwhankim.github.io/ko/blog/opengl_triangle1/)
-2. [khronos의 Vertex Specifiactaion 문서](https://www.khronos.org/opengl/wiki/Vertex_Specification)
-3. [Anton Gerdealn - "Hello Triangle"](https://antongerdelan.net/opengl/hellotriangle.html)
+1. [VAO, VBO 개념 정리](https://whilescape.tistory.com/entry/OpenGL-오픈지엘-데이터-관련-개념-정리1)
+1. [OpenGL 삼각형 그리기-VBO, VAO](https://kyoungwhankim.github.io/ko/blog/opengl_triangle1/)
+1. [khronos의 Vertex Specifiactaion 문서](https://www.khronos.org/opengl/wiki/Vertex_Specification)
+1. [Anton Gerdealn - "Hello Triangle"](https://antongerdelan.net/opengl/hellotriangle.html)
+1. [OpenGL 데이터 개념 정리 (VAO, VBO)](https://whilescape.tistory.com/entry/OpenGL-오픈지엘-데이터-관련-개념-정리1)

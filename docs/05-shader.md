@@ -3,15 +3,26 @@
 - OpenGL 랜더링 파이프라인은 고정 함수 블록과 프로그래밍 가능한 쉐이더 블록을 포함한 여러 개의 스테이지로 이루어져 있다. Shader는 GPU에서 수행하는 프로그램이며, OpenGL은 이를 고정함수로 연결시켜 작동한다. GPU는 단순한 연산을 수행하는데 유리하며, 이를 대규모의 core를 통해 병렬처리함으로써 애플리케이션 수행 속도를 향상시킬 수 있다. OpenGL은 스크린의 각 픽셀에 어떤 색을 출력할지를 연산하기 위해 GPU를 사용하며 이 때 GPU에서 Shader를 병렬로 수행한다. 이를 통해 빠르게 화면에 출력한 이미지를 생성할 수 있다.
 - OpenGL 쉐이더는 openGL Shading Language (GLSL)로 작성한다. C와 유사하지만 완벽하게 동일하지는 않고 그래픽스 프로세서에서 동작할 수 있는 특수한 기능들을 지원한다. 이 언어의 컴파일러는 OpenGL에 내장되어 있고, 쉐이더 소스를 작성하여 OpenGL에 전달하면 이는 **쉐이더 객체**로 바뀌어 컴파일되고 여러 쉐이더 객체들이 하나의 **프로그램 객체**로 링크된다. 간단한 그래픽을 처리하려면 vertex shader와 fragment shader만 사용해도 충분하다. 추가로 처리를 원할 경우, tessellation control/evaluation shader, geometry shader, compute shader를 추가로 사용할 수 있다. 게임 엔진 같은 경우는 라이브로 shader 스크립트를 생성하고 이를 GPU에 전달하여 내가 원하는 그래픽을 출력하기도 한다.
 - OpenGL 쉐이더도 state machine으로 동작하기 때문에 특정 순서로 호출하지 않으면 제대로 동작하지 않는다. 쉐이더를 생성하고 수행하는 과정은 다음과 같다.
-  - `glCreateShader()`: 빈 쉐이더 객체를 생성한다.
-  - `glShaderSource()`: 쉐이더 소스 코드를 쉐이더 객체로 전달(복사)한다.
-  - `glCompileShader()`: 쉐이더 객체에 포함된 소스코드를 컴파일한다.
-  - `glCreateProgram()`: 쉐이더 객체에 attach시킬 프로그램 객체를 생성한다.
-  - `glAttachShader()`: 프로그램 객체에 쉐이더 객체를 attach한다.
-  - `glLinkProgram()`: 프로그램에 attach된 모든 쉐이더 객체를 링크한다.
-  - `glDeleteShader()`: 쉐이더 객체를 삭제한다. 쉐이더가 프로그램 객체이 링크되면 바이너리가 보관되기 때문에 쉐이더 객체는 더이상 필요하지 않다.
-  - `glUsePorgram()`: 랜더링을 위해 프로그램 객체를 사용한다.
-  - `glDeleteProgram()`: 사용을 마친 프로그램 객체를 삭제한다.
+  1. Create an empty program
+     - `glCreateProgram()`: 쉐이더 객체에 attach시킬 프로그램 객체를 생성한다.
+  1. Create an empty shader
+     - `glCreateShader()`: 빈 쉐이더 객체를 생성한다.
+  1. Attach shader source code to the shader
+     - `glShaderSource()`: 쉐이더 소스 코드를 쉐이더 객체로 전달(복사)한다.
+  1. Compile the shader
+     - `glCompileShader()`: 쉐이더 객체에 포함된 소스코드를 컴파일한다.
+  1. Attach the shader to the program
+     - `glAttachShader()`: 프로그램 객체에 쉐이더 객체를 attach한다.
+  1. Link program (create executables and link them together)
+     - `glLinkProgram()`: 프로그램에 attach된 모든 쉐이더 객체를 링크한다.
+  1. Validate program (optional but highly recommended for debugging)
+  1. Use shader program
+     - `glUsePorgram(ID)`: 랜더링을 위해 프로그램 객체를 사용한다.
+     - 이후의 **Draw call**은 모두 해당 쉐이더를 사용한다.
+     - Draw call에서 원치 않는 쉐이더가 사용되는 것을 막기 위해 사용 완료 후, 쉐이더 ID를  0('No shader')로 설정하는 것을 추천한다.
+  1. Delete the shader and program
+     - `glDeleteShader()`: 쉐이더 객체를 삭제한다. 쉐이더가 프로그램 객체이 링크되면 바이너리가 보관되기 때문에 쉐이더 객체는 더이상 필요하지 않다.
+     - `glDeleteProgram()`: 사용을 마친 프로그램 객체를 삭제한다.
 
 ```c++
 GLuint glCreateProgram(void);
