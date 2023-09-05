@@ -123,7 +123,13 @@ void glGetAttribLocation()
 ### Default Block
 
 - 디폴트 블록 유니폼을 선언하는 방식은 변수 앞에 `uniform` 키워드를 넣는 것이다.
-- 정점 속성과 동일하게 쉐이더 코드 내에서 레이아웃 위치를 지정할 수 있지만 특별히 지정하지 않을 경우, OpenGL이 자동으로 할당하며 `glGetUniformLocation()`으로 해당 레이아웃 위치를 확인할 수 있다. 유니폼의 타입에 따라 `glUniform*()` 함수를 사용해서 값을 입력한다. 벡터나 행렬을 전달할 수도 있으며, 행렬의 경우 OpenGL이 선호하는 column-wise로 데이터가 저장되어 있음에 유의하자. 일반적인 경우는 row-wise로 행렬 데이터를 저장하므로 glm이 아닌 수학 라이브러리를 사용할 경우 데이터 저장순서를 확인하고 column-wise가 아니면 OpenGL에 맞게 변형해주어야 한다.
+- 정점 속성과 동일하게 쉐이더 코드 내에서 레이아웃 위치를 지정할 수 있지만 특별히 지정하지 않을 경우, OpenGL이 자동으로 할당하며 `glGetUniformLocation()`으로 해당 레이아웃 위치를 확인할 수 있다. 유니폼의 타입에 따라 `glUniform*()` 함수를 사용해서 값을 입력한다.
+  - glUniform1f – Single floating value
+  - glUniform1i – Single integer value
+  - glUniform4f – vec4 of floating values
+  - glUniform4fv – vec4 of floating values, value specified by pointer
+  - glUniformMatrix4fv – mat4 of floating values, value specified by pointer
+- 벡터나 행렬을 전달할 수도 있으며, 행렬의 경우 OpenGL이 선호하는 column-wise로 데이터가 저장되어 있음에 유의하자. 일반적인 경우는 row-wise로 행렬 데이터를 저장하므로 glm이 아닌 수학 라이브러리를 사용할 경우 데이터 저장순서를 확인하고 column-wise가 아니면 OpenGL에 맞게 변형해주어야 한다.
   
 ```c++
 layout(location = 0) out vec4 color;
