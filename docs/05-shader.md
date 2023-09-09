@@ -126,7 +126,7 @@ void main() {
 
 ## Fragment Shader
 
-- fragment shader는 rasterizer가 만들어준 프래그먼트 데이터(랜더링할 픽셀)을 입력받아 픽셀 별로 동작한다. 즉, 색깔을 그려야할 픽셀이 정해지면 fragment shader도 그 수만큼 동작해서 각 픽셀의 색을 계산한다.
+- Fragment shader는 rasterizer가 만들어준 프래그먼트 데이터(랜더링할 픽셀)을 입력받아 픽셀 별로 동작한다. 즉, 색깔을 그려야할 픽셀이 정해지면 fragment shader도 그 수만큼 동작해서 각 픽셀의 색을 계산한다.
 - Fragment shader가 가지는 built-in 변수는 다음과 같다.
   - `gl_FragCoord`
   - `gl_FontFacing`
@@ -141,6 +141,11 @@ void main() {
     color = vec4(1.0, 0.0, 0.0, 1.0); // red
 }
 ```
+
+### Interpoloation
+
+- Rasterizer는 정점 별 속성(per-vertex attribute)을 가지고 정점 들로 이루어진 프리미티브 내부의 값들을 보간(interpoloation)한다. 즉, 삼각형의 경우를 예로 들면 삼각형 내부의 컬러 값은 삼각형의 각 꼭지점의 컬러 값의 가중합이다. Fragment shader는 이렇게 보간된 값들을 이용해서 출력 값을 계산한다.
+- 텍스쳐를 매핑할 때 해당 텍스쳐의 coordinate을 계산하는 경우, 혹은 광원효과 (e.g. Phong shading)을 이용해서 부드럽고 둥그런 표면의 illusion을 계산할 때 보간을 사용하면 해당 효과들을 손쉽게 처리할 수 있다.
 
 ## Reference
 

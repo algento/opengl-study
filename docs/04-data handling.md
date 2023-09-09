@@ -190,6 +190,47 @@ void glDeleteVertexArrays(GLsizei n, GLuint* arrays);
 // - arrays: VAO ID의 배열
 ```
 
+## Index Buffer Object (IBO)
+
+- 예를 들어 큐브를 그릴 경우, 총 12개의 삼각형이 필요하며 (면 당 2개) 이를 그리기 위해 총 36개의 정점을 GPU로 전달해야 한다. 하지만 실제로 큐브의 정점은 8개만 있으면 되므로 중복 정보를 여러 번 GPU에 제공하는 것은 비효율적이다.
+- 따라서 8개의 정점 데이터와 그에 대한 인덱스 정보를 제공하는 것이 훨씬 효율적이다. 이를 위해 필요한 것이 index buffer이다. OpenGL에서는 별도의 IBO 객체를 제공하지 않지만 인덱스를 제공하는 용도로 별도의 버퍼 타입인 `GL_ELEMENT_ARRAY_BUFFER`를 제공한다. 따라서 IBO를 이용하여 물체를 그릴 경우, VAO에 IBO 버퍼를 만들고 attach하면 된다.
+
+## Summary
+
+- OpenGL에서 제공하는 데이터 핸들링 방식을 이용하여 Mesh를 그리는 법은 다음과 같다.
+
+### Create Mesh
+
+1. `glGenVertexArray(1, &VAO)`
+2. `glBindVertexArray(VAO)`
+3. `glGenBuffers(1, &IBO)`
+4. `glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO)`
+5. `glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies[0]) * num_indicies, verticies, GL_DYNAMIC/STATIC_DRAW)`
+6. `glGenBuffers(1, &VBO)`
+7. `glBindBuffer(GL_ARRAY_BUFFER, VBO)`
+8. `glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * num_vertices, vertices, GL_DYNAMIC/STATIC_DRAW);
+9. `glVertexAttribPointer(i, ...)`
+10. `glEnableVertexAttribArray(i,)`
+11. Reset
+    - `glBindBuffer(GL_ARRAY_BUFFER, 0);`
+    - `glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);`
+    - `glBindVertexArray(0);`
+
+### Render Mesh
+
+1. `glBindVertexArray(VAO);`
+2. `glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);`
+3. `glDrawElements(GL_TRIANGLES, num_indicies, GL_<Data Type>, 0);`
+4. Reset
+   - `glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);`
+   - `glBindVertexArray(0);`
+
+### Clear Mesh
+
+1. `glDeleteBuffers(1, &IBO);`
+2. `glDeleteBuffers(1, &VBO);`
+3. `glDeleteVertexArrays(1, &VAO)`
+
 ## Reference
 
 1. [VAO, VBO](https://rvalueref.tistory.com/6)-gl4.5 버전 설명

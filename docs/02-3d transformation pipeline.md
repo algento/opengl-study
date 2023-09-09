@@ -24,7 +24,7 @@
 
 ## View Space (Eye Camera or Camera Space)
 
-- 카메라 좌표계는 세계 좌표계에서의 camera origin을 기준으로 하고 camera axis (x: right, y:up, z:backward)와 정렬되어 있는 좌표계이다.
+- 카메라 좌표계는 세계 좌표계에서의 카메라 원점(origin)을 기준으로 하고 camera axis (x: right, y:up, z:backward)와 정렬되어 있는 좌표계이다.
 - 월드 공간에서 표현된 좌표들을 카메라가 볼 때 어떻게 표현되는지 알 수 있다.
 - **View Matrix**(${^E}\!T_{W}$)
   $${^E}\!r = \begin{bmatrix}x_e \\ y_e \\ z_e \end{bmatrix}= {^E}\!T_{W} {^W}\!r = {^E}\!T_{W}\begin{bmatrix}x_w \\ y_w \\ z_w \end{bmatrix} $$
@@ -34,8 +34,30 @@
 - 카메라 좌표계에서 표현된 월드 공간에 대한 Clipping이 이루어지는 3차원 공간이다.
 - 이 공간은 4차원 homogeneous coordinate (x, y, z, w)로 표현되며, scale 차원인 $w_c$가 $-z_e$가 되는 공간이다. Veretx Shader가 glPosition에 데이터를 쓸 때 이 공간에 있다고 한다.
 - **Projection Matrix**($P$)
-  - Perpective proejction의 경우는 원근이 고려되며 Orthographic projection의 경우 원근이 무시된다.
-    $$^{C}\!\bar{r} = \begin{bmatrix} x_c \\ y_c \\  z_c\\ w_c\end{bmatrix}= P\ ^{E}\!\bar{r} = P\ \begin{bmatrix} x_e \\ y_e \\  z_e\\ 1\end{bmatrix}$$
+  $$^{C}\!\bar{r} = \begin{bmatrix} x_c \\ y_c \\  z_c\\ w_c\end{bmatrix}= P\ ^{E}\!\bar{r} = P\ \begin{bmatrix} x_e \\ y_e \\  z_e\\ 1\end{bmatrix}$$
+
+### Projection
+
+- OpenGL에서 제공하는 Projeciton에는 perspective projection와 orhtographic projection의 2가지가 있다. 카메라 기하학의 카메라 이미지 평면이 near plane이라고 생각하면 이해하기 쉽다.
+- Orthographic projection의 경우 원근이 무시하기 때문에 주로 2D application에 사용된다.
+  - Frustrum이 cuboid 형태이며, Near plane과 Far plane 사이의 모든 물체들은 남고 나머지는 버려진다.
+  - Frustrum이 cuboid이기 때문에 3D depth에 따른 크기차이가 발생하지 않는다.
+  ![Orhtographic Projection](figs/ortho-projection.png)
+- Perspective proejction의 경우는 원근이 고려되기 때문에 주로 3D application에 사용된다.
+  - Frustrum이 truncated pyramid 형태이며, 해당 피라미드 형태 내부의 모든 물체들은 남고 나머지는 버려진다.
+  - 거리에 따른 물체의 크기 차이가 반영된다.
+  ![Perspective Projection](figs/persp-projection.png)
+- GLM에서 각각의 Projection Matrix를 만드는 법은 다음과 같다.
+
+  ```c++
+  glm::mat4 proj = glm::perspective(fov, aspect, near, far); 
+  /* fov = field-of-view, the angle of the frustum.
+  aspect = aspect ratio of the viewport (usually its width divided by its height).
+  near = distance of the near plane.
+  far = distance of the far plane. */
+  // Bind the given matrix to a uniform in the shader. 
+  gl_Position = projection * view * model * vec4(pos, 1.0);
+  ```
 
 ## Normalized Device Space
 
@@ -56,13 +78,15 @@
 
 ![Coordinate Systems](figs/coordinate-systems.png)
 
-## Model-View Transformation
+## Model-View-Projection Matrix
+
+### Model-View Matrix
 
 - 모델 공간을 랜더링하기 위해 뷰 공간으로 변환하는 것을 말하며, 모델 행렬과 뷰 행렬을 곱해서 모델-뷰 행렬을 계산할 수 있다.
 - 일반적으로 정점들은 월드 공간으로 이동시킨 후 한번에 변환하는 것보다 모델-뷰 행렬을 통해 한번에 변환하는 것이 효율적이며, 부동소수점 연산에 의한 정밀도에도 유리하다.
 $$^{E}\!T_{L} = ^{E}\!\!T_{W} \!\ ^{W}\!T_{L}$$
 
-## Projection Transformation
+### Projection Matrix
 
 - 모델-뷰 행렬에 의해서 계산된 정점들을 화면 상의 최종 이미지로 어떻게 투영하는지 결정할 때 사용된다.
 - OpenGL의 투영 변환은 뷰 볼륨과 클리핑 평면을 정의하며, 클리핑 평면은 OpenGL이 Geometry가 보이는지 판단하기 위해 사용하는 3D 공간 상의 평면 공식이다.
