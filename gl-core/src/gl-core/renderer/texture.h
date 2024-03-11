@@ -10,7 +10,7 @@
  */
 #pragma once
 
-#include <sys/types.h>
+#include "gl-core/renderer/texture_specification.h"
 namespace glcore {
 class Texture2D {
  public:
@@ -25,6 +25,8 @@ class Texture2D {
     [[nodiscard]] uint32_t width() const { return width_; }
     [[nodiscard]] uint32_t height() const { return height_; }
     [[nodiscard]] uint32_t renderer_id() const { return renderer_id_; }
+    [[nodiscard]] const TextureSpec& spec() const { return spec_; }
+    [[nodiscard]] TextureSpec& spec() { return spec_; }
 
     void SetData(void* data, uint32_t size);
     void Bind();
@@ -36,6 +38,7 @@ class Texture2D {
 
  private:
     std::string path_;
+    TextureSpec spec_;
     uint32_t width_{0}, height_{0};
     uint32_t renderer_id_{0};
     uint32_t internal_format_{0}, data_format_{0};

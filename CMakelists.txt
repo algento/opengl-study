@@ -31,5 +31,5 @@ option(USE_GLEW "Use GLEW" ON)
 ## Subdirectories ------------------------------------------------------------##
 add_subdirectory(gl-core)
 add_subdirectory(gl-sandbox)
-
+add_subdirectory(imgui-app)
 

@@ -150,3 +150,4 @@ void main() {
 ## Reference
 
 1. [LearnOpenGL-Advanced GLSL](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL)
+1. [OpenGL Shader Programming Tutorial:Uniform Blocks and Uniform Buffer Objects](https://youtu.be/s4UHxFjQji4?si=qAdyeKeTr3Asy_6L)
