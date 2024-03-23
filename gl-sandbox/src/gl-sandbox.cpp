@@ -15,6 +15,7 @@
     #include <glad/glad.h>
 #endif
 
+#include "gl-core/camera/camera.h"
 #include "gl-core/glpch.h"
 #include "gl-core/renderer/index_buffer.h"
 #include "gl-core/renderer/vertex_array.h"
@@ -26,7 +27,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
     /* (GLFW) GLFW 초기화*/
     if (glfwInit() == GLFW_FALSE) {
-        std::cout << "Failed to initialize GLFW" << std::endl;
+        std::cout << "Failed to initialize GLFW" << '\n';
         glfwTerminate();
         return -1;
     }
@@ -76,7 +77,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
     std::cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << "\n";
     std::cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << "\n";
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
 
     /* VBO -------------------------------------------------------------------*/
     // r3 ----- r2
@@ -104,9 +105,14 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     vao->SetVertexBuffer(vbo);
     vao->SetIndexBuffer(ibo);
 
+    glcore::PerspCamera camera(45.0f, 640.0f, 480.0f, 0.1f, 100.0f);
+
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
     glcore::Shader shader("../gl-sandbox/assets/shaders/basic.glsl");
     shader.Bind();
+    shader.SetMat4("u_view_projection_matrix",
+                   camera.GetViewProjectionMatrix());
+    glcore::Shader::Unbind();
 
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
@@ -116,12 +122,17 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         /* 프레임 버퍼를 배경색으로 최기화 */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        /* 카메라 업데이트 */
+        camera.OnUpdateTmp(window, 0.0f);
+        shader.Bind();
+        shader.SetMat4("u_view_projection_matrix",
+                       camera.GetViewProjectionMatrix());
         /* OpenGL이 해당 vao를 사용하도록, vao를 바인딩 */
         vao->Bind();
 
         /* 사각형 그리기 그리기*/
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
+        glcore::Shader::Unbind();
         /* (GLFW) front and back buffers를 스왑 */
         glfwSwapBuffers(window);
 
