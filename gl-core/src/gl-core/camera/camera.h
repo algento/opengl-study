@@ -13,16 +13,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "gl-core/base/noncopyable.h"
+
 namespace glcore {
 class GuiEvent;
 
-class CameraBase {  // NOLINT
+class CameraBase : private NonCopyable {  // NOLINT
  public:
-    CameraBase()                             = default;
-    virtual ~CameraBase()                    = default;
-    CameraBase(const CameraBase&)            = delete;
-    CameraBase& operator=(const CameraBase&) = delete;
-
     void SetProjectionMatrix(glm::mat4 proj) { projection_matrix_ = proj; }
 
     void SetViewMatrix(glm::mat4 view) { view_matrix_ = view; }
@@ -47,16 +44,21 @@ class CameraBase {  // NOLINT
     [[nodiscard]] const glm::mat4& projection_matrix() const {
         return projection_matrix_;
     }
+
     [[nodiscard]] const glm::vec3& orientation() const { return orientation_; }
     [[nodiscard]] const glm::vec3& position() const { return position_; }
 
-    virtual void OnUpdate(float delta_time) = 0;
-    virtual void OnEvent(GuiEvent& event)   = 0;
+    [[nodiscard]] glm::mat4 GetViewProjectionMatrix() const {
+        return projection_matrix_ * view_matrix_;
+    }
+
+    virtual void OnUpdate(float delta_time)     = 0;
+    virtual void OnEvent(GuiEvent& event)       = 0;
+    virtual bool OnMouseScroll(GuiEvent& event) = 0;
 
  protected:
-    virtual bool OnMouseScroll(GuiEvent& event) = 0;
-    virtual void UpdateViewMatrix()             = 0;
-    virtual void UpdateProjectionMatrix()       = 0;
+    virtual void UpdateViewMatrix()       = 0;
+    virtual void UpdateProjectionMatrix() = 0;
 
     glm::mat4 projection_matrix_{1.0F};
     glm::mat4 view_matrix_{1.0F};
@@ -70,8 +72,15 @@ class PerspCamera : public CameraBase {
  public:
     PerspCamera(float fov, float width, float height, float near, float far);
 
-    void OnGuiEvent(GuiEvent& event);
     void OnUpdate(float delta_time) override;
+    void OnUpdateTmp(void* window, float delta_time);
+    void OnEvent(GuiEvent& event) override;
+    bool OnMouseScroll(GuiEvent& event) override;
+
+    [[nodiscard]] glm::vec3 GetPosition() const { return position_; }
+    [[nodiscard]] glm::vec3 GetOrientation() const { return orientation_; }
+    [[nodiscard]] glm::vec3 GetFocalPoint() const { return focal_point; }
+    [[nodiscard]] float GetFocalLength() const { return focal_length_; }
 
     [[nodiscard]] glm::vec3 GetUpAxis() const;
     [[nodiscard]] glm::vec3 GetRightAxis() const;
@@ -115,17 +124,17 @@ class PerspCamera : public CameraBase {
     [[nodiscard]] std::pair<float, float> PanSpeed() const;
     [[nodiscard]] float ZoomSpeed() const;
 
-    glm::vec3 mouse_position_{0.0F};
+    glm::vec2 mouse_position_{0.0F};
 
     glm::vec3 focal_point{0.0F};
     float focal_length_{0.0F};
 
     float fov_{45.0F};
     float near_{0.1F};
-    float far_{100.0F};
+    float far_{10.0F};
 
-    float viewport_width_{1280.0F};
-    float viewport_height_{720.0F};
+    float viewport_width_{640.0F};
+    float viewport_height_{480.0F};
 };
 
 }  // namespace glcore

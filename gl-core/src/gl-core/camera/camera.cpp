@@ -13,13 +13,18 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
+
+#include "gl-core/event/key_code.h"
+#include "gl-core/event/mouse_code.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include "gl-core/event/user_input.h"
+
 namespace glcore {
 
-constexpr float kDefaultFocalLength = 100.0F;
+constexpr float kDefaultFocalLength = 10.0F;
 constexpr float kDeltaScale         = 0.003F;
 constexpr float kZoomScale          = 0.1F;
 constexpr float kMinFocalLength     = 1.0F;
@@ -39,9 +44,33 @@ PerspCamera::PerspCamera(float fov, float width, float height, float near,
         glm::perspectiveFov(glm::radians(fov), width, height, near, far);
 }
 
-void PerspCamera::OnGuiEvent(GuiEvent& event) {}
+void PerspCamera::OnEvent(GuiEvent& event) {}
+
+bool PerspCamera::OnMouseScroll(GuiEvent& event) { return false; }
 
 void PerspCamera::OnUpdate(float delta_time) {}
+
+void PerspCamera::OnUpdateTmp(void* window, float delta_time) {
+    // 왼쪽 Alt를 누르고 마우스를 조작하면 Camera View를 변환한다.
+    if (UserInput::IsKeyPressed((GLFWwindow*)window, KeyCode::LeftAlt)) {
+        const glm::vec2& mouse{UserInput::GetMouseX((GLFWwindow*)window),
+                               UserInput::GetMouseY((GLFWwindow*)window)};
+        glm::vec2 scaled_delta = (mouse - mouse_position_) * kDeltaScale;
+        mouse_position_        = mouse;
+
+        if (UserInput::IsMouseButtonPressed((GLFWwindow*)window,
+                                            MouseCode::ButtonRight)) {
+            MousePan(scaled_delta);
+        } else if (UserInput::IsMouseButtonPressed((GLFWwindow*)window,
+                                                   MouseCode::ButtonLeft)) {
+            MouseRotate(scaled_delta);
+        } else if (UserInput::IsMouseButtonPressed((GLFWwindow*)window,
+                                                   MouseCode::ButtonMiddle)) {
+            MouseZoom(scaled_delta.y);
+        }
+    }
+    UpdateViewMatrix();
+}
 
 void PerspCamera::MousePan(const glm::vec2& delta) {
     auto [xSpeed, ySpeed] = PanSpeed();
