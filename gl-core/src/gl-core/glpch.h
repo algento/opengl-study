@@ -17,6 +17,8 @@
 #include <string>
 //
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <unordered_map>

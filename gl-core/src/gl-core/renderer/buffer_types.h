@@ -10,7 +10,10 @@
  */
 
 #pragma once
-#include "gl-core/glpch.h"
+
+#include <cstdint>
+#include <string>
+#include <vector>
 namespace glcore {
 enum class GlDataType : uint32_t {
     None = 0,
