@@ -9,6 +9,8 @@
  * 
  */
 #include <GLFW/glfw3.h>
+
+#include "gl-core/glpch.h"
 #if GLCORE_USE_GLEW
     #include <GL/glew.h>
 #else
@@ -16,7 +18,6 @@
 #endif
 
 #include "gl-core/camera/camera.h"
-#include "gl-core/glpch.h"
 #include "gl-core/renderer/index_buffer.h"
 #include "gl-core/renderer/vertex_array.h"
 #include "gl-core/renderer/vertex_buffer.h"

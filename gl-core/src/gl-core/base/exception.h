@@ -46,6 +46,6 @@ inline std::string ShortFileName(const std::string& path) {
                 .c_str());                                                    \
     }
 
-#define GLCORE_ASSERT_(predicate) \
-    ASSERTMSG_(predicate,         \
-               std::string("Assertion failed: ") + ::std::string(#predicate))
+#define GLCORE_ASSERT_(predicate)                                    \
+    GLCORE_ASSERTMSG_(predicate, std::string("Assertion failed: ") + \
+                                     ::std::string(#predicate))
