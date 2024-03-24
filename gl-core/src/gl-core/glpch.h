@@ -19,11 +19,11 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <functional>
 #include <memory>
 #include <unordered_map>
 #include <vector>
-
 #if defined(PLATFORM_WINDOWS)
     #include <Windows.h>
 #endif
