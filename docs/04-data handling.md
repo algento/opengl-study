@@ -154,7 +154,75 @@ void glUniform*(GLuint location, parameters...)
 
 ### Uniform Block
 
-- 만약 아주 복잡한 쉐이더를 작성하게 된다면, 많은 상수 데이터가 필요하기 때문이 이를 한번에 하나씩 CPU에서 GPU로 전달하는 것은 비효율적인 일이다. 따라서 `glUniform*()` 함수를 매번 호출하는 성능저하를 막고 유니폼을 더 쉽게 공유하기 위해 유니폼 블록이 제공되고 이를 다루는 버퍼 객체를 Uniform Buffer Object (UBO)라 한다.
+- 만약 아주 복잡한 쉐이더를 작성하게 된다면, 많은 상수 데이터가 필요하기 때문이 이를 한번에 하나씩 CPU에서 GPU로 전달하는 것은 비효율적인 일이다.
+- 특히, 해당 데이터가 모든 쉐이더에서 공통으로 사용해야 한다면 더욱 그렇다. 따라서 `glUniform*()` 함수를 매번 호출하는 성능저하를 막고 다수의 쉐이더들이 공통으로 사용하는 데이터를 더 쉽게 공유하기 위해 OpenGL은 유니폼 블록을 제공한다.
+- 유니폼 블록을 다루는 버퍼 객체가 Uniform Buffer Object (UBO)이며, UBO와 연관된 유니폼 데이터들은 한번에 설정되어야 한다.
+
+유니폼 블록은 쉐이더에서 다음과 같이 정의하고 사용할 수 있다. 예제에서는 모든 쉐이더에서 공통으로 사용하는 projection 행렬과 view 행렬을 유니폼 블록을 통해서 공유하는 경우이다.
+
+```c++
+#version 330 core
+layout (location = 0) in vec3 aPos;
+
+layout (std140) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
+
+uniform mat4 model;
+
+void main()
+{
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
+}  
+```
+
+- `layout(std140)`은 현재 정의된 유니폼 블럭이 지정된 std140이라는 메모리 레이아웃을 사용하느다는 의미이다.
+
+#### Uniform Block Layout
+
+- GLSL은 `shared layout`으로 불리는 유니폼 메모리 레이아웃을 기본으로 사용한다. `shared layout`을 사용할 경우, GLSL이 최적화를 진행하기 때문에 메모리 상에서 데이터의 순서는 유지되지만 어떻게 저장되는지는 최적화 결과에 따라 다르기 때문에 사용자 입장에서는 사용하기가 까다롭다.
+  - 각 데이터 간의 offset을 `glGetUniformindices`함수로 확인할 수는 있지만 어렵고 불편한 것은 그대로다.
+- 또다른 레이아웃으로는 `packed layout`이 있다. 컴파일러가 유니폼 블록에 상관없이 최적화를 하기 때문에 레이아웃이 프로그램에 따라 달라질 수 있다.
+-`std 140` 레이아웃은 변수 타입에 따라 offset이 정해져 있기 때문에 메모리 레이아웃이 최적화에 따라 변경되지 않기 때문에 사용자가 직접 offset을 계산하기에 편리하다. 기본적인 룰은 다음과 같다. 좀 더 자세한 내용은 [링크](https://registry.khronos.org/OpenGL/extensions/ARB/ARB_uniform_buffer_object.txt)를 참고하자. (N: 4 byte)
+  - 스칼라 (int, bool 등): N의 base alignment를 가진다.
+  - 벡터: 2N 혹은 4N의 base alignment를 가진다.
+  - 배열 (스칼라 혹은 벡터의): 4N의 base alignment를 가진다.
+  - 행렬: 벡터의 배열이며, 각 벡터는 4N의 base alignment를 가진다.
+  - 구조체: 각 요소들이 위의 규칙을 따르지만 4N alignment에 맞추서 padding 된다.
+
+```c++
+//------ GLSL --------//
+layout (std140) uniform ExampleBlock
+{
+                     // base alignment  // aligned offset
+    float value;     // 4               // 0 
+    vec3 vector;     // 16              // 16  (16의 배수여야하므로 4->16)
+    mat4 matrix;     // 16              // 32  (0 열)
+                     // 16              // 48  (1 열)
+                     // 16              // 64  (2 열)
+                     // 16              // 80  (3 열)
+    float values[3]; // 16              // 96  (values[0])
+                     // 16              // 112 (values[1])
+                     // 16              // 128 (values[2])
+    bool boolean;    // 4               // 144
+    int integer;     // 4               // 148
+};
+
+//------ 유니폼 버퍼 할당 --------//
+unsigned int uboExampleBlock;
+glGenBuffers(1, &uboExampleBlock);
+glBindBuffer(GL_UNIFORM_BUFFER, uboExampleBlock);
+glBufferData(GL_UNIFORM_BUFFER, 152, NULL, GL_STATIC_DRAW); // 152 바이트 메모리 할당
+glBindBuffer(GL_UNIFORM_BUFFER, 0);
+```
+
+유니폼 버퍼 데이터를 설정하는 것은 다음의 과정을 거친다.
+
+1. `glGetUniformBlockIndex()` 함수를 이용해서 긱 쉐이더에 공통으로 선언한 유니폼 변수의 인덱스를 가져온다.
+1. `glUniformBlockBinding()`함수를 이용해서 쉐이더와 유니폼 변수 인덱스를 원하는 바인딩 포인트에 연결한다.
+1. `glBufferSubData()`와 offset을 이용하여 각 데이터를 할당한다.
 
 <!-- TOOD: OpenGL Super Bible 5.2.2 (p127) 정리하자. -->
 
@@ -239,3 +307,4 @@ void glDeleteVertexArrays(GLsizei n, GLuint* arrays);
 1. [khronos의 Vertex Specifiactaion 문서](https://www.khronos.org/opengl/wiki/Vertex_Specification)
 1. [Anton Gerdealn - "Hello Triangle"](https://antongerdelan.net/opengl/hellotriangle.html)
 1. [OpenGL 데이터 개념 정리 (VAO, VBO)](https://whilescape.tistory.com/entry/OpenGL-오픈지엘-데이터-관련-개념-정리1)
+1. [[Learn OpenGL 번역] 5-8. 고급 OpenGL - 고급 GLSL](https://heinleinsgame.tistory.com/33)
