@@ -106,6 +106,8 @@ void PerspCamera::UpdateViewMatrix() {
     //* view_matrix_는 $^{c}T_{w}$이므로 $^{w}T_{c}$를 구하고 inverse를 취한다.
     view_matrix_ = glm::inverse(glm::translate(glm::mat4(1.0F), position_) *
                                 glm::toMat4(quat));
+
+    //* Classic calculation
     // view_matrix_ =
     //     glm::lookAt(position_, position_ + GetForwardAxis(), GetUpAxis());
 }
@@ -113,13 +115,16 @@ void PerspCamera::UpdateViewMatrix() {
 glm::vec3 PerspCamera::GetUpAxis() const {
     //* OpenGL에서는 y축이 up이다.
     return glm::rotate(CalculateOrientation(), glm::vec3(0.0F, 1.0F, 0.0F));
+
+    //* Classic calculation
     // return glm::normalize(glm::cross(GetRightAxis(), GetForwardAxis()));
 }
 
 glm::vec3 PerspCamera::GetRightAxis() const {
     //* OpenGL에서는 x축이 right이다.
     return glm::rotate(CalculateOrientation(), glm::vec3(1.0F, 0.0F, 0.0F));
-    //TODO
+
+    //* Classic calculation
     // return glm::normalize(
     //     glm::cross(GetForwardAxis(), glm::vec3(0.0F, 1.0F, 0.0F)));
 }
@@ -127,13 +132,14 @@ glm::vec3 PerspCamera::GetRightAxis() const {
 glm::vec3 PerspCamera::GetForwardAxis() const {
     //* OpenGL에서는 -z축이 forward이다.
     return glm::rotate(CalculateOrientation(), glm::vec3(0.0F, 0.0F, -1.0F));
-    //TODO
+
+    //* Classic calculation
     // glm::vec3 front;
-    // float yaw   = orientation_.y;
-    // float pitch = orientation_.x;
-    // front.x     = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    // front.y     = sin(glm::radians(pitch));
-    // front.z     = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    // float yaw   = -orientation_.y;
+    // float pitch = -orientation_.x;
+    // front.x     = sin(yaw) * cos(pitch);
+    // front.y     = sin(pitch);
+    // front.z     = -cos(yaw) * cos(pitch);
     // return glm::normalize(front);
 }
 

@@ -68,6 +68,13 @@ class CameraBase : private NonCopyable {  // NOLINT
     glm::vec3 orientation_{0.0F};
 };
 
+/**
+ * @brief Prespective Camera
+ * In "world space", x-axis is right, y-axis is up, and z-axis is backward w.r.t user. origin is at the center of world.
+ * In "view space", x-axis is right, y-axis is up, and z-axis is backward w.r.t user. origin is at the center of camera.
+ * In "device space (2D)", x-axis is right, y-axis is down. origin is top-left.
+ */
+
 class PerspCamera : public CameraBase {
  public:
     PerspCamera(float fov, float width, float height, float near, float far);
@@ -82,8 +89,13 @@ class PerspCamera : public CameraBase {
     [[nodiscard]] glm::vec3 GetFocalPoint() const { return focal_point; }
     [[nodiscard]] float GetFocalLength() const { return focal_length_; }
 
+    /// @brief Get up axis in world space (the cross product of right axis and forward axis)
     [[nodiscard]] glm::vec3 GetUpAxis() const;
+
+    /// @brief Get right axis in world space (the cross product of up axis of world space and forward axis)
     [[nodiscard]] glm::vec3 GetRightAxis() const;
+
+    /// @brief Get forward axis in world space (the vector from camera center to the focal point)
     [[nodiscard]] glm::vec3 GetForwardAxis() const;
 
     [[nodiscard]] float fov() const { return fov_; }
@@ -115,6 +127,9 @@ class PerspCamera : public CameraBase {
     void UpdateProjectionMatrix() override;
     void UpdateViewMatrix() override;
 
+    /// @brief Pan speed in x and y direction, respectively.
+    /// if mouse is moved to the right, camera moves to the left.
+    /// if mouse is moved to the up, camera moves to the down.
     void MousePan(const glm::vec2& delta);
     void MouseRotate(const glm::vec2& delta);
     void MouseZoom(float delta);
