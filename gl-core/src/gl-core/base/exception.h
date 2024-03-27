@@ -30,7 +30,8 @@ inline std::string ExceptionMessage(const std::string_view& msg,
 }
 
 inline std::string ShortFileName(const std::string& path) {
-    return path.substr(path.find_last_of("src") + 1);
+    auto pos = path.rfind("gl-core");
+    return path.substr(pos);
 }
 
 }  // namespace glcore::internal
