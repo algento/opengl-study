@@ -50,6 +50,7 @@
 ### Books
 
 1. OpenGL super-bible
+   - [OpenGL super-bible 스터디](https://like-grapejuice.tistory.com/category/Computer%20Science/OpenGL)
 1. OpenGL 4 shading language
 1. OpenGL development cookbook
 1. Computer Graphics Programming in OpenGL with C++

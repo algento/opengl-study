@@ -12,20 +12,25 @@ set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
 ## Dependencies --------------------------------------------------------------##
 ## opengl -----------##
 find_package(OpenGL REQUIRED)
+
 ## fmt -----------##
 find_package(fmt REQUIRED)
+
 ## glfw3 -----------##
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3) # To use library in 3rdparty
 find_package(glfw3 CONFIG REQUIRED )
 # find_package(glfw3 CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw)
 set(GLFW3_LIBRARIES glfw)
 get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
+
 ## glad -----------##
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glad/lib/cmake/glad)
 find_package(glad CONFIG REQUIRED)
+
 ## glm -----------##
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glm/lib/cmake/glm)
 find_package(glm CONFIG REQUIRED)
+
 ## imgui -----------##
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/imgui/lib/cmake/imgui)
 find_package(imgui CONFIG REQUIRED)
@@ -38,8 +43,9 @@ find_package(glew CONFIG REQUIRED)
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog)
 find_package(spdlog CONFIG REQUIRED)
 
+set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR})
 ## Target ------------------------------------------------------------------##
-set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR}/stb_image)
+
 file(GLOB_RECURSE GLCORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/gl-core/*.cpp")
 
 add_library(gl-core STATIC
@@ -53,6 +59,7 @@ set(GLCORE_INCLUDE_DIR_LISTS
     ${GLCORE_SRC_DIR}
     ${GLAD_INCLUDE_DIRS} 
     ${GLFW3_INCLUDE_DIRS}
+    ${STB_IMAGE_INCUDE_DIRS}
     # ${IMGUI_INCLUDE_DIRS}
 )
 if(USE_GLEW)
