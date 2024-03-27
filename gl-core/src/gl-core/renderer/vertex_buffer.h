@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "gl-core/renderer/buffer_types.h"
+#include "gl-core/renderer/buffer_layout.h"
 
 namespace glcore {
 class VertexBuffer {
