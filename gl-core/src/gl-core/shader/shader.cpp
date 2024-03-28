@@ -9,7 +9,7 @@
  * 
  */
 
-#include "shader.h"
+#include "gl-core/shader/shader.h"
 
 namespace {
 inline GLenum ShaderTypeFromString(const std::string& type) {
@@ -27,7 +27,7 @@ std::string ReadFile(const std::string& file_path) {
     std::ifstream ifs(file_path, std::ios::in | std::ios::binary);
 
     if (!ifs.is_open()) {
-        std::cout << "Cannot find file!" << std::endl;
+        std::cout << "Cannot find file!" << '\n';
         return "";
     }
     if (ifs) {
@@ -45,12 +45,12 @@ std::string ReadFile(const std::string& file_path) {
             // 파일 스트림을 닫는다.
             ifs.close();
         } else {
-            std::cout << "Could not read from file " << file_path << std::endl;
+            std::cout << "Could not read from file " << file_path << '\n';
             assert(false);
         }
 
     } else {
-        std::cout << "Could not open file " << file_path << std::endl;
+        std::cout << "Could not open file " << file_path << '\n';
         assert(false);
     }
     return result;
@@ -99,7 +99,7 @@ std::unordered_map<GLuint, std::string> Shader::Load(
         // 쉐이더 타입 토큰 종료점 검색
         size_t eol = source.find_first_of("\r\n", pos);
         if (eol == std::string::npos) {  // 토큰 다음 타입이 없는 경우 예외 처리
-            std::cout << "Syntax error!" << std::endl;
+            std::cout << "Syntax error!" << '\n';
             assert(false);
         }
 
@@ -108,14 +108,14 @@ std::unordered_map<GLuint, std::string> Shader::Load(
         std::string type = source.substr(begin, eol - begin);
         if (ShaderTypeFromString(type) == 0) {
             // 토큰 다음 타입이 이상한 경우 예외 처리
-            std::cout << "Invalid shader type specified" << std::endl;
+            std::cout << "Invalid shader type specified" << '\n';
             assert(false);
         }
 
         // 쉐이더 코드 읽기
         size_t next_line_pos = source.find_first_not_of("\r\n", eol);
         if (next_line_pos == std::string::npos) {
-            std::cout << "Syntax error!" << std::endl;
+            std::cout << "Syntax error!" << '\n';
             assert(false);
         }
 
@@ -158,7 +158,7 @@ void Shader::Compile(
             glDeleteShader(shader_id);
 
             std::cout << "Shader compilation failure!\n"
-                      << info_log.data() << std::endl;
+                      << info_log.data() << '\n';
             assert(false);
             break;
         }
@@ -184,7 +184,7 @@ void Shader::Compile(
         for (auto id : shader_ids) {
             glDeleteShader(id);
         }
-        std::cout << "Shader link failure!\n" << info_log.data() << std::endl;
+        std::cout << "Shader link failure!\n" << info_log.data() << '\n';
         assert(false);
     }
 

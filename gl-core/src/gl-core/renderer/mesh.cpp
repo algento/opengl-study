@@ -43,7 +43,8 @@ void Mesh::Create(float* vertex_buffer_data, uint32_t vertex_buffer_size,
 void Mesh::Render() const {
     vertex_array_->Bind();
     index_buffer_->Bind();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, (int32_t)index_count_, GL_UNSIGNED_INT,
+                   nullptr);
 }
 
 void Mesh::Release() {
@@ -57,4 +58,5 @@ void Mesh::Release() {
         vertex_array_->Release();
     }
 }
+
 }  // namespace glcore
