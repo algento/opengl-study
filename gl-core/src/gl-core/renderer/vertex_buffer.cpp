@@ -41,8 +41,14 @@ VertexBuffer::VertexBuffer(void* vertices_data, uint32_t size) {
     glBufferData(GL_ARRAY_BUFFER, size, vertices_data, GL_DYNAMIC_DRAW);
 }
 
-VertexBuffer::~VertexBuffer() { glDeleteBuffers(1, &id_); }
+VertexBuffer::~VertexBuffer() { Release(); }
 
+void VertexBuffer::Release() {
+    if (id_ != 0) {
+        glDeleteBuffers(1, &id_);
+    }
+    id_ = 0;
+}
 void VertexBuffer::Bind() const { glBindBuffer(GL_ARRAY_BUFFER, id_); }
 void VertexBuffer::Unbind() { glBindBuffer(GL_ARRAY_BUFFER, 0); }
 

@@ -26,6 +26,7 @@ class VertexArray {
 
     void Bind() const;
     static void Unbind();
+    void Release();
 
     void SetVertexBuffer(const std::shared_ptr<VertexBuffer>& vertex_buffer);
     void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& index_buffer);

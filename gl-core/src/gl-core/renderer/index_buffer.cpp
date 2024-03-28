@@ -30,7 +30,14 @@ IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count) {
                  GL_STATIC_DRAW);
 }
 
-IndexBuffer::~IndexBuffer() { glDeleteBuffers(1, &id_); }
+IndexBuffer::~IndexBuffer() { Release(); }
+
+void IndexBuffer::Release() {
+    if (id_ != 0) {
+        glDeleteBuffers(1, &id_);
+    }
+    id_ = 0;
+}
 
 void IndexBuffer::Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_); }
 void IndexBuffer::Unbind() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }

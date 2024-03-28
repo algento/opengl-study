@@ -24,6 +24,7 @@ class IndexBuffer {
 
     void Bind() const;
     static void Unbind();
+    void Release();
 
     [[nodiscard]] uint32_t GetCount() const { return count_; }
 

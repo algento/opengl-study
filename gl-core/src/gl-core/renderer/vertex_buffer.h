@@ -28,6 +28,7 @@ class VertexBuffer {
 
     void Bind() const;
     static void Unbind();
+    void Release();
 
     void SetData(const void* vertices_data, uint32_t size) const;
     void SetLayout(const GlBufferLayout& layout) { layout_ = layout; }

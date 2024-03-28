@@ -23,7 +23,14 @@ namespace {}  // namespace
 namespace glcore {
 VertexArray::VertexArray() { glGenVertexArrays(1, &id_); }
 
-VertexArray::~VertexArray() { glDeleteVertexArrays(1, &id_); }
+VertexArray::~VertexArray() { Release(); }
+
+void VertexArray::Release() {
+    if (id_ != 0) {
+        glDeleteVertexArrays(1, &id_);
+    }
+    id_ = 0;
+}
 
 void VertexArray::Bind() const { glBindVertexArray(id_); }
 void VertexArray::Unbind() { glBindVertexArray(0); }
