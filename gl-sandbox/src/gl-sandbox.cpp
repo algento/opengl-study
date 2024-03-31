@@ -59,9 +59,9 @@ std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
 
     unsigned int indices[] = {
         0, 3, 1, //
-        1, 3, 2, //
-        2, 3, 0, //
-        0, 1, 2
+        1, 3, 2,//
+        2, 3, 0,//
+        0, 1, 2 //
     };
     
     // float vertices[] = {
@@ -73,12 +73,12 @@ std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
     // auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}});
 
     float vertices[] = {
-        -1.0f, -1.0f, 0.0f, 0.0F, 0.0F,// r0
-        0.0f, -1.0f, 1.0f, 0.5F, 0.0F,// r1
-        1.0f, -1.0f, 0.0f, 1.0F, 0.0F, // r2
-        0.0f, 1.0f, 0.0f, 0.5F, 1.0F
+        -1.0f, -1.0f, 0.0f, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F,// r0
+        0.0f, -1.0f, 1.0f, 0.0F, 1.0F, 0.0F, 1.0F, 0.5F, 0.0F,// r1
+        1.0f, -1.0f, 0.0f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.0F, // r2
+        0.0f, 1.0f, 0.0f,0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F
     };
-    auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
+    auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
     auto mesh = std::make_shared<glcore::Mesh>();
     mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 12); //NOLINT
@@ -140,6 +140,8 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     std::cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << "\n";
     std::cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << "\n";
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
+    
+    glEnable(GL_DEPTH_TEST);  // Depth 설정, Depth에 따른 UI 그리려면 필요함.
 
     /* Mesh 생성 --------------------------------------------------------------*/
     // auto mesh = CreateRectangle();
@@ -170,7 +172,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);  // dark grey
 
         /* 프레임 버퍼를 배경색으로 최기화 */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         /* 카메라 업데이트 */
         camera.OnUpdateTmp(window, 0.0f);
