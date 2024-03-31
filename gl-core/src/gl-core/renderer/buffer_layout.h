@@ -161,17 +161,17 @@ class GlBufferElement {
 
     [[nodiscard]] const std::string& name() const { return name_; }
     [[nodiscard]] DataType type() const { return type_; }
-    [[nodiscard]] size_t size() const { return size_; }
-    [[nodiscard]] size_t offset() const { return offset_; }
+    [[nodiscard]] uint32_t size() const { return size_; }
+    [[nodiscard]] uint32_t offset() const { return offset_; }
     [[nodiscard]] bool is_normalized() const { return is_normalized_; }
 
-    void SetOffset(size_t offset) { offset_ = offset; }
+    void SetOffset(uint32_t offset) { offset_ = offset; }
 
  private:
     std::string name_{};
     DataType type_{DataType::kNone};
-    size_t size_{0};
-    size_t offset_{0};
+    uint32_t size_{0};
+    uint32_t offset_{0};
     bool is_normalized_{false};
 };
 
@@ -183,7 +183,6 @@ class GlBufferLayout {
     GlBufferLayout(std::initializer_list<GlBufferElement> elements)
         : elements_(elements) {
         CalculateOffsets();
-        UpdateStride();
     }
 
     [[nodiscard]] int32_t GetStride() const { return stride_; }
@@ -202,20 +201,13 @@ class GlBufferLayout {
 
  private:
     void CalculateOffsets() {
-        size_t offset = 0;
-        stride_       = 0;
+        uint32_t offset = 0;
+        stride_         = 0;
         for (auto& element : elements_) {
             element.SetOffset(offset);
             offset += element.size();
         }
-    }
-
-    void UpdateStride() {
-        stride_ = 0;
-        if (elements_.empty()) {
-            return;
-        }
-        stride_ = static_cast<int32_t>(elements_.back().size());
+        stride_ = static_cast<int32_t>(offset);
     }
 
     std::vector<GlBufferElement> elements_{};

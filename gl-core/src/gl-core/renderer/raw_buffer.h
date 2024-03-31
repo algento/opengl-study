@@ -26,15 +26,26 @@ class RawBuffer {
 
     RawBuffer(const RawBuffer&)            = delete;
     RawBuffer& operator=(const RawBuffer&) = delete;
-    RawBuffer(RawBuffer&&)                 = default;
-    RawBuffer& operator=(RawBuffer&&)      = default;
+    RawBuffer(RawBuffer&& other) noexcept
+        : data_(other.data_), size_(other.size_) {
+        other.data_ = nullptr;
+        other.size_ = 0;
+    }
+    RawBuffer& operator=(RawBuffer&& other) noexcept {
+        if (this != &other) {
+            data_       = other.data_;
+            size_       = other.size_;
+            other.data_ = nullptr;
+            other.size_ = 0;
+        }
+        return *this;
+    }
 
     static RawBuffer Copy(const void* data, uint32_t size) {
         RawBuffer buffer;
         buffer.Allocate(size);
         memcpy(buffer.data_, data, size);
         return buffer;
-        ;
     }
 
     void Allocate(uint32_t size) {

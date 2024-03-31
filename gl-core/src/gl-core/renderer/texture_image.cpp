@@ -18,13 +18,13 @@
 namespace glcore {
 
 void TextureImage::LoadImage(const std::string& file_path) {
-    uint32_t channels{1};
+    int32_t channels{1};
 
     // Load image using stb_image
     stbi_set_flip_vertically_on_load(1);
     Byte* data = stbi_load(file_path.c_str(), (int*)&width_, (int*)&height_,
                            (int*)&channels, 0);
-    GLCORE_ASSERT_(data == nullptr);  //NOLINT
+    GLCORE_ASSERT_(data != nullptr);  //NOLINT
 
     // Set format from channels
     if (channels == 4) {

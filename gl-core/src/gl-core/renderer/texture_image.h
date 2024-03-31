@@ -44,8 +44,9 @@ class TextureImage {
 
     TextureImage(std::string name, std::string file_path)
         : name_(std::move(name)), file_path_(std::move(file_path)) {
-        LoadImage(file_path);
+        LoadImage(file_path_);
     }
+    // ~TextureImage() { Release(); }
     ~TextureImage() = default;
     MOVABLE_NONCOPYABLE(TextureImage);
 

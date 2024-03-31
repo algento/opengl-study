@@ -12,6 +12,9 @@
 
 #include <iostream>
 
+#include "gl-core/renderer/texture.h"
+#include "gl-core/renderer/texture_image.h"
+
 #if GLCORE_USE_GLEW
     #include <GL/glew.h>
 #else
@@ -35,17 +38,17 @@ std::shared_ptr<glcore::Mesh> CreateRectangle() {
     // r0 ----- r1
     // clang-format off
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // r0
-        0.5f, -0.5f, 0.0f, // r1
-        0.5f, 0.5f, 0.0f, // r2
-        -0.5f, 0.5f, 0.0f // r3
+        -0.5F, -0.5F, 0.0F,  0.0F, 0.0F,// r0
+        0.5F, -0.5F, 0.0F, 1.0F, 0.0F,// r1
+        0.5F, 0.5F, 0.0F, 1.0F, 1.0F, // r2
+        -0.5F, 0.5F, 0.0F, 0.0F, 1.0F // r3
     };
     uint32_t indices[] = {
         0, 1, 2,  // triangle 1, counter-clockwise
         2, 3, 0   // triangle 2, counter-clockwise
 
     };
-    auto layout = glcore::GlBufferLayout({{"a_Position", glcore::GlBufferElement::DataType::kFloat3}});
+    auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
     auto mesh = std::make_shared<glcore::Mesh>();
     mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 6); //NOLINT
@@ -53,12 +56,6 @@ std::shared_ptr<glcore::Mesh> CreateRectangle() {
 }
 
 std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
-    float vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
-    };
 
     unsigned int indices[] = {
         0, 3, 1, //
@@ -66,8 +63,22 @@ std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
         2, 3, 0, //
         0, 1, 2
     };
+    
+    // float vertices[] = {
+    //     -1.0f, -1.0f, 0.0f,// r0
+    //     0.0f, -1.0f, 1.0f, // r1
+    //     1.0f, -1.0f, 0.0f, // r2
+    //     0.0f, 1.0f, 0.0f
+    // };
+    // auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}});
 
-    auto layout = glcore::GlBufferLayout({{"a_Position", glcore::GlBufferElement::DataType::kFloat3}});
+    float vertices[] = {
+        -1.0f, -1.0f, 0.0f, 0.0F, 0.0F,// r0
+        0.0f, -1.0f, 1.0f, 0.5F, 0.0F,// r1
+        1.0f, -1.0f, 0.0f, 1.0F, 0.0F, // r2
+        0.0f, 1.0f, 0.0f, 0.5F, 1.0F
+    };
+    auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
     auto mesh = std::make_shared<glcore::Mesh>();
     mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 12); //NOLINT
@@ -130,21 +141,26 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     std::cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << "\n";
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
 
+    /* Mesh 생성 --------------------------------------------------------------*/
     // auto mesh = CreateRectangle();
     auto obj1 = CreateTetrahedron();
     auto obj2 = CreateTetrahedron();
 
+    /* 카메라 생성 --------------------------------------------------------------*/
     glcore::PerspCamera camera(45.0f, 640.0f, 480.0f, 0.1f, 100.0f);
 
+    /* Texture 생성 -----------------------------------------------------------*/
+    auto brick_texture = glcore::Texture2D(glcore::TextureImage("brick_texture", "../gl-sandbox/assets/textures/brick.png"));
+
+    auto dirt_texture = glcore::Texture2D(glcore::TextureImage("dirt_texture", "../gl-sandbox/assets/textures/dirt.png"));
+
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
-    glcore::Shader shader("../gl-sandbox/assets/shaders/basic.glsl");
+    glcore::Shader shader("../gl-sandbox/assets/shaders/example1.glsl");
     shader.Bind();
     shader.SetMat4("u_view_projection_matrix",
                    camera.GetViewProjectionMatrix());
     glcore::Shader::Unbind();
-
     
-
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
         double now = glfwGetTime();
@@ -165,10 +181,12 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
                        camera.GetViewProjectionMatrix());
         glm::mat4 model_matrix{1};
         shader.SetMat4("u_model_matrix", model_matrix);
+        brick_texture.Bind();
         obj1->Render();
 
         model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, 1.5f));
         shader.SetMat4("u_model_matrix", model_matrix);
+        dirt_texture.Bind();
         obj2->Render();
         glcore::Shader::Unbind();
         /* (GLFW) front and back buffers를 스왑 */
