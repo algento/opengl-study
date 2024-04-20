@@ -32,6 +32,7 @@
 1. [GLSL Tutorial](https://www.opentutorials.org/module/3659)
 1. [goden's 대학교 OpenGL 스터디](https://goeden.tistory.com/category/College%20Study/OpenGL)
 1. [Computer Graphics W/OpenGL](https://github.com/geoo993/ComputerGraphicsWithOpenGL)
+1. [VisPy Documentation: Modern OpenGL](https://vispy.org/getting_started/modern-gl.html)
 
 ### msdf-gen
 
@@ -63,20 +64,18 @@
 
 1. [Open.gl](https://open.gl)
 1. [Awesome OpenGL](https://github.com/eug/awesome-opengl)
-1. [An Intro to modern OpenGL (2010)](https://duriansoftware.com/joe/an-intro-to-modern-opengl.-table-of-contents)
+1. [An Intro to modern OpenGL (2010)](https://duriansoftware.com/joe/an-intro-to-modern-opengl.-table-of-contents): 간단한 예제로 모던 OpenGL의 개념을 잘 설명한다.
 1. [OpenGL Book](https://openglbook.com/chapter-0-preface-what-is-opengl.html)
-1. [OGL-dev](https://ogldev.org)
+1. [OGL-dev](https://ogldev.org): 간단한 예제로 모던 OpenGL의 개념을 잘 설명한다.
 1. [3D Graphics w/OpenGL](https://www3.ntu.edu.sg/home/ehchua/programming/opengl/CG_BasicsTheory.html)
     - [3D Graphics with OpenGL by Example](https://www3.ntu.edu.sg/home/ehchua/programming/opengl/CG_Examples.html)
 1. [C++ library for modern OpenGL experiments](https://github.com/tksuoran/erhe/tree/main)
 1. [OpenGL Buffer Gist](https://gist.github.com/KoKuToru/63baa17cffbd3e89f044102dcab5f8e0)
 1. [OpenGL GLSL](https://learn-and-give.tistory.com/27)
-1. [Ray Tracing OpenGL](https://github.com/engilas/raytracing-opengl)
-1. [Godot Engine 4.1 documentation: Ray-Casting](https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html#d-ray-casting-from-screen)
-1. [C++ Mouse picking for ray to plane intersection](https://gamedev.stackexchange.com/questions/172308/c-mouse-picking-for-ray-to-plane-intersection)
-1. [Picking with an OpenGL hack](http://www.opengl-tutorial.org/kr/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/)
 1. [Mouse Picking with Ray Casting](https://antongerdelan.net/opengl/raycasting.html)
 1. [Wikibooks GLSL Programming](https://en.wikibooks.org/wiki/GLSL_Programming)
+1. [WebGL Fundamentals](https://webglfundamentals.org)
+1. [Shader Toy BETA](https://www.shadertoy.com/browse)
 
 ### Game Engines & Development
 
@@ -98,3 +97,31 @@
    - from <https://github.com/FortAwesome/Font-Awesome/raw/6.x/metadata/icons.yml>
    - for use with <https://github.com/FortAwesome/Font-Awesome/blob/6.x/webfonts/fa-regular-400.ttf>, <https://github.com/FortAwesome/Font-Awesome/blob/6.x/webfonts/fa-solid-900.ttf>
 1. [AURA-X imgui-design 구입](https://aura-x.mysellix.io)
+1. [ios opengl tutorial](https://sungcheol-kim.gitbook.io/ios-opengles-tutorial/chapter60)
+1. [OpenGL Google Slide](https://docs.google.com/presentation/d/1bppZI5j5ktU_q_5mQSRZDHGdJRmHMPzBP8GFzKWz7Os/htmlpresent)
+
+### Drawing 2D Polyline
+
+1. [(github) Polyline2D](https://github.com/CrushedPixel/Polyline2D)
+1. [(stackoverflow) Drawing a line in modern OpenGL](https://stackoverflow.com/questions/60440682/drawing-a-line-in-modern-opengl)
+1. [(github) Line](https://github.com/mhalber/Lines)
+
+### Ray Casting
+
+1. [Ray Tracing OpenGL](https://github.com/engilas/raytracing-opengl)
+1. [Godot Engine 4.1 documentation: Ray-Casting](https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html#d-ray-casting-from-screen)
+1. [C++ Mouse picking for ray to plane intersection](https://gamedev.stackexchange.com/questions/172308/c-mouse-picking-for-ray-to-plane-intersection)
+1. [Picking with an OpenGL hack](http://www.opengl-tutorial.org/kr/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/)
+
+### Bounding Box
+
+1. [OpenGL Programming/Bounding Box](https://en.wikibooks.org/wiki/OpenGL_Programming/Bounding_box)
+
+### 여러 개의 텍스쳐 바인딩
+
+1. [OpenGL, Texture 여러개 바인드하기](https://blog.naver.com/pkk1113/220961193617)
+1. [OpenGL 바이블/텍스쳐](https://like-grapejuice.tistory.com/173#google_vignette)
+
+### Point Cloud Rendering
+
+1. [Large Point Cloud Rendering](https://github.com/AlfonsoLRz/PointCloudRendering)
