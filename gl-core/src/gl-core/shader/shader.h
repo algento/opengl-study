@@ -10,6 +10,8 @@
  */
 
 #pragma once
+#include "gl-core/base/exception.h"
+#include "gl-core/base/noncopyable.h"
 #if GLCORE_USE_GLEW
     #include <GL/glew.h>
 #else
@@ -17,6 +19,7 @@
 #endif
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -99,6 +102,72 @@ class Shader {
 
     GLuint id_{0};
     std::string name_;
+};
+
+class Program {
+ public:
+    Program()  = default;
+    ~Program() = default;
+    MOVABLE_NONCOPYABLE(Program);
+
+    bool Empty();
+    void Clear();
+    void Use();
+    void Link();
+    void DeclareUniform(const std::string& name);
+    void DeclareAttribute(const std::string& name);
+
+    [[nodiscard]] unsigned int GetId() const {
+        GLCORE_ASSERT_(data_ != nullptr && data_->id != 0);  //NOLINT
+        return data_->id;
+    }
+
+    [[nodiscard]] bool HasUniform(const std::string& name) const {
+        return data_->uniforms.find(name) != data_->uniforms.end();
+    }
+
+    [[nodiscard]] bool HasAttribute(const std::string& name) const {
+        return data_->attributes.find(name) != data_->attributes.end();
+    }
+
+    [[nodiscard]] int GetAttributeId(const std::string& name) const {
+        return data_->attributes.at(name);
+    }
+
+    [[nodiscard]] int GetUniformId(const std::string& name) const {
+        return data_->uniforms.at(name);
+    }
+
+    void SetInt(const std::string& name, int32_t value) const;
+
+    void SetUint(const std::string& name, uint32_t value) const;
+
+    void SetIntArray(const std::string& name, int32_t* values,
+                     uint32_t count) const;
+
+    void SetUintArray(const std::string& name, uint32_t* values,
+                      uint32_t count) const;
+    void SetFloat(const std::string& name, float value) const;
+
+    void SetFloat2(const std::string& name, const glm::vec2& value) const;
+
+    void SetFloat3(const std::string& name, const glm::vec3& value) const;
+
+    void SetFloat4(const std::string& name, const glm::vec4& value) const;
+
+    void SetMat3(const std::string& name, const glm::mat3& value) const;
+
+    void SetMat4(const std::string& name, const glm::mat4& value) const;
+
+    struct Data {
+        unsigned int id;
+        std::vector<Shader> shaders;
+        std::unordered_map<std::string, int> uniforms;
+        std::unordered_map<std::string, int> attributes;
+    };
+
+ private:
+    std::shared_ptr<Data> data_ = std::make_shared<Data>();
 };
 
 class ShaderMap {

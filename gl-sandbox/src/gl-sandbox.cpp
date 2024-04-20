@@ -23,6 +23,7 @@
 
 #include "gl-core/camera/camera.h"
 #include "gl-core/renderer/buffer_layout.h"
+#include "gl-core/renderer/light.h"
 #include "gl-core/renderer/mesh.h"
 #include "gl-core/shader/shader.h"
 
@@ -63,20 +64,12 @@ std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
         2, 3, 0,//
         0, 1, 2 //
     };
-    
-    // float vertices[] = {
-    //     -1.0f, -1.0f, 0.0f,// r0
-    //     0.0f, -1.0f, 1.0f, // r1
-    //     1.0f, -1.0f, 0.0f, // r2
-    //     0.0f, 1.0f, 0.0f
-    // };
-    // auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}});
 
     float vertices[] = {
         -1.0f, -1.0f, 0.0f, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F,// r0
         0.0f, -1.0f, 1.0f, 0.0F, 1.0F, 0.0F, 1.0F, 0.5F, 0.0F,// r1
         1.0f, -1.0f, 0.0f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.0F, // r2
-        0.0f, 1.0f, 0.0f,0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F
+        0.0F, 1.0F, 0.0F,0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F
     };
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
@@ -157,12 +150,8 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     auto dirt_texture = glcore::Texture2D(glcore::TextureImage("dirt_texture", "../gl-sandbox/assets/textures/dirt.png"));
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
-    glcore::Shader shader("../gl-sandbox/assets/shaders/example1.glsl");
-    shader.Bind();
-    shader.SetMat4("u_view_projection_matrix",
-                   camera.GetViewProjectionMatrix());
-    glcore::Shader::Unbind();
-    
+    glcore::Shader shader("../gl-sandbox/assets/shaders/ambient_light.glsl");
+    glcore::Light light(glm::vec3(1.0F, 1.0F, 1.0F), 0.8F, 0.0F);
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
         double now = glfwGetTime();
@@ -181,6 +170,9 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         shader.Bind();
         shader.SetMat4("u_view_projection_matrix",
                        camera.GetViewProjectionMatrix());
+        shader.SetFloat3("u_light.color", light.color());
+        shader.SetFloat("u_light.intensity", light.ambient_intensity());
+        
         glm::mat4 model_matrix{1};
         shader.SetMat4("u_model_matrix", model_matrix);
         brick_texture.Bind();
