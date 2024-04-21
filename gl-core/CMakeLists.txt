@@ -6,46 +6,39 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
+## To use library in 3rdparty --------##
 # set(CMAKE_FIND_ROOT_PATH ${3RDPARTY_DIR}) # for find_package 
 # set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE "ONLY") # for find_package, no search in system paths
+# set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3) # To use library in 3rdparty
+# find_package(glfw3 CONFIG REQUIRED)
+# OR
+# find_package(glfw3 CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3 NO_DEFAULT_PATH)
+## ----------------------------------##
 
 ## Dependencies --------------------------------------------------------------##
-## opengl -----------##
 find_package(OpenGL REQUIRED)
-
-## fmt -----------##
 find_package(fmt REQUIRED)
 
-## glfw3 -----------##
-set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3) # To use library in 3rdparty
-find_package(glfw3 CONFIG REQUIRED )
-# find_package(glfw3 CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw)
+## Custom-build 3rd parth libraries -----------##
+set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR})
+
+find_package(glfw3 CONFIG REQUIRED  PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3 NO_DEFAULT_PATH)
 set(GLFW3_LIBRARIES glfw)
 get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "GLFW3_INCLUDE_DIRS: ${GLFW3_INCLUDE_DIRS}")
 
-## glad -----------##
-set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glad/lib/cmake/glad)
-find_package(glad CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glad/lib/cmake/glad NO_DEFAULT_PATH)
 
-## glm -----------##
-set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glm/lib/cmake/glm)
-find_package(glm CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glm/lib/cmake/glm NO_DEFAULT_PATH)
 
-## imgui -----------##
-set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/imgui/lib/cmake/imgui)
-find_package(imgui CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/imgui/lib/cmake/imgui NO_DEFAULT_PATH)
 
-## glew -----------##
-set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glew/lib/cmake/glew)
-find_package(glew CONFIG REQUIRED)
+find_package(glew CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glew/lib/cmake/glew NO_DEFAULT_PATH)
 
-## spdlog -----------##
-set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog)
-find_package(spdlog CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog NO_DEFAULT_PATH)
 
-set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR})
+find_package(assimp CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/assimp/lib/cmake/assimp-5.4 NO_DEFAULT_PATH)
 ## Target ------------------------------------------------------------------##
-
 file(GLOB_RECURSE GLCORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/gl-core/*.cpp")
 
 add_library(gl-core STATIC
