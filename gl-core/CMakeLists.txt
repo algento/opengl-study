@@ -25,7 +25,6 @@ set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR})
 find_package(glfw3 CONFIG REQUIRED  PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3 NO_DEFAULT_PATH)
 set(GLFW3_LIBRARIES glfw)
 get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
-message(STATUS "GLFW3_INCLUDE_DIRS: ${GLFW3_INCLUDE_DIRS}")
 
 find_package(glad CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glad/lib/cmake/glad NO_DEFAULT_PATH)
 
@@ -38,6 +37,7 @@ find_package(glew CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glew/lib/cmake/glew NO_D
 find_package(spdlog CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/spdlog/lib/cmake/spdlog NO_DEFAULT_PATH)
 
 find_package(assimp CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/assimp/lib/cmake/assimp-5.4 NO_DEFAULT_PATH)
+
 ## Target ------------------------------------------------------------------##
 file(GLOB_RECURSE GLCORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/gl-core/*.cpp")
 
@@ -53,6 +53,7 @@ set(GLCORE_INCLUDE_DIR_LISTS
     ${GLAD_INCLUDE_DIRS} 
     ${GLFW3_INCLUDE_DIRS}
     ${STB_IMAGE_INCUDE_DIRS}
+    ${ASSIMP_INCLUDE_DIRS}
     # ${IMGUI_INCLUDE_DIRS}
 )
 if(USE_GLEW)
@@ -69,6 +70,7 @@ target_include_directories(gl-core PUBLIC
 set(GLCORE_LIBRARY_LISTS 
     ${GLM_LIBRARIES}
     ${GLFW3_LIBRARIES}
+    ${ASSIMP_LIBRARIES}
     # ${IMGUI_LIBRARIES}
 )
 if(USE_GLEW)
