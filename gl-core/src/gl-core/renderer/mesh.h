@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include <glm/glm.hpp>
 
 #include "gl-core/renderer/buffer_layout.h"
 #include "gl-core/renderer/index_buffer.h"
@@ -17,6 +18,7 @@
 #include "gl-core/renderer/vertex_buffer.h"
 
 namespace glcore {
+
 // TODO: Seperate Mesh and MeshRenderer?
 class Mesh {
  public:
@@ -28,10 +30,34 @@ class Mesh {
 
     std::shared_ptr<VertexArray> vertex_array_{nullptr};
 
- private:
+ protected:
     std::shared_ptr<VertexBuffer> vertex_buffer_{nullptr};
     std::shared_ptr<IndexBuffer> index_buffer_{nullptr};
     uint32_t vertex_count_{0};
     uint32_t index_count_{0};
+};
+
+class TriangleMesh : public Mesh {
+ public:
+    struct VertexInput {
+        glm::vec3 position;
+        glm::vec4 color;
+        glm::vec2 texcoord;
+    };
+#pragma pack(push, 1)
+    struct VertexLayout {
+        glm::vec3 position;
+        glm::vec4 color;
+        glm::vec2 texcoord;
+        glm::vec3 normal;
+    };
+#pragma pack(pop)
+    void Create(std::vector<VertexInput>& vertices,
+                std::vector<uint32_t>& indices);
+
+ private:
+    static void CalculateAverageNormals(
+        std::vector<VertexInput>& vertices, std::vector<uint32_t>& indices,
+        std::vector<VertexLayout>& vertices_layout);
 };
 }  // namespace glcore

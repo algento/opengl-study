@@ -59,4 +59,50 @@ void Mesh::Release() {
     }
 }
 
+void TriangleMesh::Create(std::vector<TriangleMesh::VertexInput>& vertices,
+                          std::vector<uint32_t>& indices) {
+    std::vector<TriangleMesh::VertexLayout> vertices_layout(vertices.size());
+
+    for (size_t i = 0; i < vertices.size(); i++) {
+        vertices_layout[i].position = vertices[i].position;
+        vertices_layout[i].color    = vertices[i].color;
+        vertices_layout[i].texcoord = vertices[i].texcoord;
+    }
+
+    CalculateAverageNormals(vertices, indices, vertices_layout);
+    Mesh::Create(
+        (float*)vertices_layout.data(),
+        (uint32_t)vertices_layout.size() * sizeof(TriangleMesh::VertexLayout),
+        GlBufferLayout({{"a_position", GlBufferElement::DataType::kFloat3},
+                        {"a_color", GlBufferElement::DataType::kFloat4},
+                        {"a_texcoord", GlBufferElement::DataType::kFloat2},
+                        {"a_normal", GlBufferElement::DataType::kFloat3}}),
+        indices.data(), indices.size());
+}
+
+void TriangleMesh::CalculateAverageNormals(
+    std::vector<TriangleMesh::VertexInput>& vertices,
+    std::vector<uint32_t>& indices,
+    std::vector<TriangleMesh::VertexLayout>& vertices_layout) {
+    size_t indice_count = indices.size();
+
+    for (size_t i = 0; i < indice_count; i += 3) {
+        uint32_t index0 = indices[i];
+        uint32_t index1 = indices[i + 1];
+        uint32_t index2 = indices[i + 2];
+
+        glm::vec3 v01 = vertices[index1].position - vertices[index0].position;
+        glm::vec3 v02 = vertices[index2].position - vertices[index0].position;
+
+        glm::vec3 normal = glm::normalize(glm::cross(v01, v02));
+        vertices_layout[index0].normal += normal;
+        vertices_layout[index1].normal += normal;
+        vertices_layout[index2].normal += normal;
+    }
+
+    for (auto& vertex : vertices_layout) {
+        vertex.normal = glm::normalize(vertex.normal);
+    }
+}
+
 }  // namespace glcore

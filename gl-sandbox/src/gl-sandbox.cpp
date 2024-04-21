@@ -38,43 +38,44 @@ std::shared_ptr<glcore::Mesh> CreateRectangle() {
     // |         |
     // r0 ----- r1
     // clang-format off
-    float vertices[] = {
-        -0.5F, -0.5F, 0.0F,  0.0F, 0.0F,// r0
-        0.5F, -0.5F, 0.0F, 1.0F, 0.0F,// r1
-        0.5F, 0.5F, 0.0F, 1.0F, 1.0F, // r2
-        -0.5F, 0.5F, 0.0F, 0.0F, 1.0F // r3
-    };
-    uint32_t indices[] = {
-        0, 1, 2,  // triangle 1, counter-clockwise
-        2, 3, 0   // triangle 2, counter-clockwise
 
+    std::vector<uint32_t> indices = {
+        0, 1, 2, //
+        2, 3, 0
     };
+
+    std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
+    vertices[0] = {{-0.5f, -0.5f, 0.0f}, {1.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 0.0F}};
+    vertices[1] = {{0.5f, -0.5f, 1.0f}, {0.0F, 1.0F, 0.0F, 1.0F}, {1.0F, 0.0F}};
+    vertices[2] = {        {0.5f, 0.5f, 0.0f}, {0.0F, 0.0F, 1.0F, 1.0F}, {1.0F, 1.0F}};
+    vertices[3] = {{-0.5F, 0.5F, 0.0F},{0.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 1.0F}};
+
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
-    auto mesh = std::make_shared<glcore::Mesh>();
-    mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 6); //NOLINT
+    auto mesh = std::make_shared<glcore::TriangleMesh>();
+    mesh->Create(vertices, indices); //NOLINT
     return mesh;
 }
 
 std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
 
-    unsigned int indices[] = {
+    std::vector<uint32_t> indices = {
         0, 3, 1, //
         1, 3, 2,//
         2, 3, 0,//
         0, 1, 2 //
     };
 
-    float vertices[] = {
-        -1.0f, -1.0f, 0.0f, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F,// r0
-        0.0f, -1.0f, 1.0f, 0.0F, 1.0F, 0.0F, 1.0F, 0.5F, 0.0F,// r1
-        1.0f, -1.0f, 0.0f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.0F, // r2
-        0.0F, 1.0F, 0.0F,0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F
-    };
+    std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
+    vertices[0] = {{-1.0f, -1.0f, 0.0f}, {1.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 0.0F}};
+    vertices[1] = {{0.0f, -1.0f, 1.0f}, {0.0F, 1.0F, 0.0F, 1.0F}, {0.5F, 0.0F}};
+    vertices[2] = {        {1.0f, -1.0f, 0.0f}, {0.0F, 0.0F, 1.0F, 1.0F}, {1.0F, 0.0F}};
+    vertices[3] = {{0.0F, 1.0F, 0.0F},{0.0F, 0.0F, 0.0F, 1.0F}, {0.5F, 1.0F}};
+
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
-    auto mesh = std::make_shared<glcore::Mesh>();
-    mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 12); //NOLINT
+    auto mesh = std::make_shared<glcore::TriangleMesh>();
+    mesh->Create(vertices, indices); //NOLINT
     return mesh;
 }
 
@@ -150,8 +151,8 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     auto dirt_texture = glcore::Texture2D(glcore::TextureImage("dirt_texture", "../gl-sandbox/assets/textures/dirt.png"));
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
-    glcore::Shader shader("../gl-sandbox/assets/shaders/ambient_light.glsl");
-    glcore::Light light(glm::vec3(1.0F, 1.0F, 1.0F), 0.8F, 0.0F);
+    glcore::Shader shader("../gl-sandbox/assets/shaders/phong_light.glsl");
+    glcore::Light light(glm::vec3(1.0F, 1.0F, 1.0F), 0.3F, glm::vec3(2.0F, -1.0F, -2.0F), 1.0F);
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
         double now = glfwGetTime();
@@ -171,14 +172,20 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         shader.SetMat4("u_view_projection_matrix",
                        camera.GetViewProjectionMatrix());
         shader.SetFloat3("u_light.color", light.color());
-        shader.SetFloat("u_light.intensity", light.ambient_intensity());
+        shader.SetFloat("u_light.ambient_intensity", light.ambient_intensity());
+        shader.SetFloat3("u_light.direction", light.direction());
+        shader.SetFloat("u_light.diffuse_intensity", light.diffuse_intensity());
         
-        glm::mat4 model_matrix{1};
+        glm::mat4 model_matrix{1.0F};
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -2.5f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
         brick_texture.Bind();
         obj1->Render();
 
-        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, 1.5f));
+       model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, -2.5f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
         dirt_texture.Bind();
         obj2->Render();
