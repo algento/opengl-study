@@ -22,7 +22,7 @@ find_package(fmt REQUIRED)
 ## Custom-build 3rd parth libraries -----------##
 set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR})
 
-find_package(glfw3 CONFIG REQUIRED  PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3 NO_DEFAULT_PATH)
+find_package(glfw3 CONFIG REQUIRED PATHS ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3 NO_DEFAULT_PATH)
 set(GLFW3_LIBRARIES glfw)
 get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -71,6 +71,7 @@ set(GLCORE_LIBRARY_LISTS
     ${GLM_LIBRARIES}
     ${GLFW3_LIBRARIES}
     ${ASSIMP_LIBRARIES}
+    fmt::fmt
     # ${IMGUI_LIBRARIES}
 )
 if(USE_GLEW)

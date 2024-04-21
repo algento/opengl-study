@@ -24,6 +24,7 @@
 #include "gl-core/camera/camera.h"
 #include "gl-core/renderer/buffer_layout.h"
 #include "gl-core/renderer/light.h"
+#include "gl-core/renderer/material.h"
 #include "gl-core/renderer/mesh.h"
 #include "gl-core/shader/shader.h"
 
@@ -152,7 +153,10 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
     glcore::Shader shader("../gl-sandbox/assets/shaders/phong_light.glsl");
-    glcore::Light light(glm::vec3(1.0F, 1.0F, 1.0F), 0.3F, glm::vec3(2.0F, -1.0F, -2.0F), 1.0F);
+    
+    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.1F, 0.3F,glm::vec3(0.0F, 0.0F, -1.0F));
+    glcore::Material shinyMaterial = glcore::Material(1.0F, 32.0F);
+    glcore::Material dullMaterial = glcore::Material(0.3F, 4.0F);
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
         double now = glfwGetTime();
@@ -171,15 +175,14 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         shader.Bind();
         shader.SetMat4("u_view_projection_matrix",
                        camera.GetViewProjectionMatrix());
-        shader.SetFloat3("u_light.color", light.color());
-        shader.SetFloat("u_light.ambient_intensity", light.ambient_intensity());
-        shader.SetFloat3("u_light.direction", light.direction());
-        shader.SetFloat("u_light.diffuse_intensity", light.diffuse_intensity());
-        
+        shader.SetFloat3("u_eye_position", camera.GetPosition());
+        dlight.UseLight(shader);
+
         glm::mat4 model_matrix{1.0F};
         model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -2.5f));
         model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
         brick_texture.Bind();
         obj1->Render();
 
@@ -187,6 +190,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, -2.5f));
         model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
+        dullMaterial.UseMaterial(shader);
         dirt_texture.Bind();
         obj2->Render();
         glcore::Shader::Unbind();

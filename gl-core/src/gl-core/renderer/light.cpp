@@ -11,14 +11,28 @@
 
 #include "gl-core/renderer/light.h"
 
+#include <fmt/core.h>
+
 #include "gl-core/shader/shader.h"
 namespace glcore {
 
-void Light::UseLight(const Shader& shader) {
-    shader.SetFloat3("u_light.color", color_);
-    shader.SetFloat("u_light.ambient_intensity", ambient_intensity_);
-    shader.SetFloat3("u_light.direction", direction_);
-    shader.SetFloat("u_light.diffuse_intensity", diffuse_intensity_);
+void DirectionalLight::UseLight(const Shader& shader) {
+    shader.SetFloat3("u_directional_light.color", color());
+    shader.SetFloat("u_directional_light.ambient_intensity",
+                    ambient_intensity());
+    shader.SetFloat("u_directional_light.diffuse_intensity",
+                    diffuse_intensity());
+    shader.SetFloat3("u_directional_light.direction", direction_);
 }
 
+uint32_t PointLight::count_ = 0;
+
+void PointLight::UseLight(const Shader& shader) {
+    std::string uniform_light = fmt::format("u_point_light[{}]", id_);
+    shader.SetFloat3(uniform_light + ".color", color());
+    shader.SetFloat(uniform_light + ".ambient_intensity", ambient_intensity());
+    shader.SetFloat(uniform_light + ".diffuse_intensity", diffuse_intensity());
+    shader.SetFloat3(uniform_light + ".position", position_);
+    shader.SetFloat3(uniform_light + ".coeff", coeff_);
+}
 }  // namespace glcore

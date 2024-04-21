@@ -11,5 +11,8 @@
 #include "gl-core/renderer/material.h"
 
 namespace glcore {
-void Material::UseMaterial(const Shader& shader) {}
+void Material::UseMaterial(const Shader& shader) const {
+    shader.SetFloat("u_material.specular_intensity", specular_intensity_);
+    shader.SetFloat("u_material.shiness", shininess_);
+}
 }  // namespace glcore

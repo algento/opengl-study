@@ -19,7 +19,7 @@ class Material {
     Material(float specular_intensity, float shininess)
         : specular_intensity_(specular_intensity), shininess_(shininess) {}
 
-    void UseMaterial(const Shader& shader);
+    void UseMaterial(const Shader& shader) const;
 
     [[nodiscard]] float specular_intensity() const {
         return specular_intensity_;
