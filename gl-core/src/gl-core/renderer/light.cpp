@@ -29,10 +29,14 @@ uint32_t PointLight::count_ = 0;
 
 void PointLight::UseLight(const Shader& shader) {
     std::string uniform_light = fmt::format("u_point_light[{}]", id_);
+    if (id_ == count_ - 1) {
+        shader.SetInt("u_num_point_lights",
+                      static_cast<int>(PointLight::count_));
+    }
     shader.SetFloat3(uniform_light + ".color", color());
     shader.SetFloat(uniform_light + ".ambient_intensity", ambient_intensity());
     shader.SetFloat(uniform_light + ".diffuse_intensity", diffuse_intensity());
     shader.SetFloat3(uniform_light + ".position", position_);
-    shader.SetFloat3(uniform_light + ".coeff", coeff_);
+    shader.SetFloat3(uniform_light + ".coefficient", coeff_);
 }
 }  // namespace glcore

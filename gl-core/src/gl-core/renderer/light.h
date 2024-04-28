@@ -64,8 +64,9 @@ class PointLight : public Light {
     [[nodiscard]] glm::vec3 position() const { return position_; }
     [[nodiscard]] glm::vec3 coeff() const { return coeff_; }
 
- private:
     static uint32_t count_;
+
+ private:
     uint32_t id_{0};
     //* where the light is in the world
     glm::vec3 position_{0.0F, 0.0F, 0.0F};

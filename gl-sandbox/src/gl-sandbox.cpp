@@ -58,6 +58,31 @@ std::shared_ptr<glcore::Mesh> CreateRectangle() {
     return mesh;
 }
 
+std::shared_ptr<glcore::Mesh> CreateFloor() {
+    /* VBO -------------------------------------------------------------------*/
+    // r3 ----- r2
+    // |         |
+    // r0 ----- r1
+    // clang-format off
+
+    std::vector<uint32_t> indices = {
+        0, 1, 2, //
+        2, 3, 0
+    };
+   
+    std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
+    vertices[0] = {{-10.0F, 0.0F, -10.0F}, {1.0F, 1.0F, 1.0F, 1.0F}, {0.0F, 0.0F}};
+    vertices[1] = {{10.0F, 0.0F, -10.0F}, {1.0F, 1.0F, 1.0F, 1.0F}, {1.0F, 0.0F}};
+    vertices[2] = {{10.0F, 0.0F, 10.0F}, {1.0F, 1.0F, 1.0F, 1.0F}, {1.0F, 1.0F}};
+    vertices[3] = {{-10.0F, 0.0F, 10.0F},{1.0F, 1.0F, 1.0F, 1.0F}, {0.0F, 1.0F}};
+
+    auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
+
+    auto mesh = std::make_shared<glcore::TriangleMesh>();
+    mesh->Create(vertices, indices); //NOLINT
+    return mesh;
+}
+
 std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
 
     std::vector<uint32_t> indices = {
@@ -142,6 +167,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     // auto mesh = CreateRectangle();
     auto obj1 = CreateTetrahedron();
     auto obj2 = CreateTetrahedron();
+    auto floor = CreateFloor();
 
     /* 카메라 생성 --------------------------------------------------------------*/
     glcore::PerspCamera camera(45.0f, 640.0f, 480.0f, 0.1f, 100.0f);
@@ -150,11 +176,21 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     auto brick_texture = glcore::Texture2D(glcore::TextureImage("brick_texture", "../gl-sandbox/assets/textures/brick.png"));
 
     auto dirt_texture = glcore::Texture2D(glcore::TextureImage("dirt_texture", "../gl-sandbox/assets/textures/dirt.png"));
+    
+    auto plain_texture = glcore::Texture2D(glcore::TextureImage("plain_texture", "../gl-sandbox/assets/textures/plain.png"));
+
+
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
     glcore::Shader shader("../gl-sandbox/assets/shaders/phong_light.glsl");
     
-    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.1F, 0.3F,glm::vec3(0.0F, 0.0F, -1.0F));
+    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.3F, 0.3F,glm::vec3(0.0F, 0.0F, -1.0F));
+
+
+    glcore::PointLight plight1(glm::vec3(0.0F, 0.0F, 0.6F), 0.0F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.3F, 0.2F, 0.1F));
+
+    glcore::PointLight plight2(glm::vec3(0.0F, 0.6F, 0.0F), 0.0F, 1.0F, glm::vec3(-4.0F, 2.0F, 0.0F), glm::vec3(0.3F, 0.1F, 0.1F));
+
     glcore::Material shinyMaterial = glcore::Material(1.0F, 32.0F);
     glcore::Material dullMaterial = glcore::Material(0.3F, 4.0F);
     /* 랜더링 루프 --------------------------------------------------------------*/
@@ -177,7 +213,10 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
                        camera.GetViewProjectionMatrix());
         shader.SetFloat3("u_eye_position", camera.GetPosition());
         dlight.UseLight(shader);
+        plight1.UseLight(shader);
+        plight2.UseLight(shader);
 
+        //* Object 1
         glm::mat4 model_matrix{1.0F};
         model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -2.5f));
         model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
@@ -185,14 +224,23 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         shinyMaterial.UseMaterial(shader);
         brick_texture.Bind();
         obj1->Render();
-
-       model_matrix = glm::mat4(1.0f);
+        
+        //* Object 2
+        model_matrix = glm::mat4(1.0f);
         model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, -2.5f));
         model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
         dullMaterial.UseMaterial(shader);
         dirt_texture.Bind();
         obj2->Render();
+
+        //* Floor
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, -2.0f, -0.0f));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        dirt_texture.Bind();
+        floor->Render();
         glcore::Shader::Unbind();
         /* (GLFW) front and back buffers를 스왑 */
         glfwSwapBuffers(window);

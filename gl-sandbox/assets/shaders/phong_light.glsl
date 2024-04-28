@@ -45,13 +45,13 @@ struct DirectionalLight {
     vec3 direction;
 };
 
-// struct PointLight {
-//     vec3 color;
-//     float ambient_intensity;
-//     float diffuse_intensity;
-//     vec3 position;
-//     vec3 coefficient;
-// };
+struct PointLight {
+    vec3 color;
+    float ambient_intensity;
+    float diffuse_intensity;
+    vec3 position;
+    vec3 coefficient;
+};
 
 struct Material {
     float specular_intensity;
@@ -64,9 +64,9 @@ uniform DirectionalLight u_directional_light;
 
 uniform vec3 u_eye_position;
 
-// const int MAX_POINT_LIGHTS = 3;
-// uniform int u_num_point_lights;
-// uniform PointLight u_point_light[MAX_POINT_LIGHTS];
+const int MAX_POINT_LIGHTS = 3;
+uniform int u_num_point_lights;
+uniform PointLight u_point_light[MAX_POINT_LIGHTS];
 
 uniform Material u_material;
 
@@ -100,24 +100,24 @@ vec4 CalculateDirectionalLight() {
     return CalculateLightFromDirection(u_directional_light.color, u_directional_light.ambient_intensity, u_directional_light.diffuse_intensity, u_directional_light.direction);
 }
 
-// vec4 CalculatePointLight() {
-//     vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
-//     for (int i = 0; i < u_num_point_lights; i++) {
-//         vec3 light_direction = v_frag_position - u_point_light[i].position;
-//         float distance = length(light_direction);
-//         light_direction = normalize(light_direction);
+vec4 CalculatePointLight() {
+    vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
+    for (int i = 0; i < u_num_point_lights; i++) {
+        vec3 light_direction = v_frag_position - u_point_light[i].position;
+        float distance = length(light_direction);
+        light_direction = normalize(light_direction);
         
-//         float attenuation = 1.0F / (u_point_light[i].coefficient.a * distance * distance + u_point_light[i].coefficient.b * distance + u_point_light[i].coefficient.c);
+        float attenuation = 1.0F / (u_point_light[i].coefficient.x * distance * distance + u_point_light[i].coefficient.y * distance + u_point_light[i].coefficient.z);
         
-//         vec4 light_color = CalculateLightFromDirection(u_point_light[i].color, u_point_light[i].ambient_intensity, u_point_light[i].diffuse_intensity, light_direction);
-//         total_color += (light_color / attenuation);
-//     }
-//     return totoal_color;
-// }
+        vec4 light_color = CalculateLightFromDirection(u_point_light[i].color, u_point_light[i].ambient_intensity, u_point_light[i].diffuse_intensity, light_direction);
+        total_color += (light_color * attenuation);
+    }
+    return total_color;
+}
 
 void main() {
     vec4 directional_light_color = CalculateDirectionalLight();
-    // vec4 point_light_color = CalculatePointLight();
-    o_color = texture(u_texture, v_texture_coord) * (directional_light_color);
-    // o_color = texture(u_texture, v_texture_coord) * (directional_light_color + point_light_color);
+    vec4 point_light_color = CalculatePointLight();
+    // o_color = texture(u_texture, v_texture_coord) * (directional_light_color);
+    o_color = texture(u_texture, v_texture_coord) * (directional_light_color + point_light_color);
 }
