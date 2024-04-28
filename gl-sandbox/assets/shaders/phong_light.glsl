@@ -55,7 +55,7 @@ struct DirectionalLight {
 
 struct Material {
     float specular_intensity;
-    float shineness;
+    float shininess;
 };
 
 uniform sampler2D u_texture;
@@ -88,7 +88,7 @@ vec4 CalculateLightFromDirection(vec3 color, float ambient_intensity, float diff
         float specular_factor = dot(view_direction, reflect_direction);
         
         if(specular_factor > 0.0F) {
-            specular_factor = pow(specular_factor, u_material.shineness);
+            specular_factor = pow(specular_factor, u_material.shininess);
             specular_color = vec4(color * u_material.specular_intensity * specular_factor, 1.0F);
         }
     }

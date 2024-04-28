@@ -13,6 +13,6 @@
 namespace glcore {
 void Material::UseMaterial(const Shader& shader) const {
     shader.SetFloat("u_material.specular_intensity", specular_intensity_);
-    shader.SetFloat("u_material.shiness", shininess_);
+    shader.SetFloat("u_material.shininess", shininess_);
 }
 }  // namespace glcore
