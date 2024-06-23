@@ -184,12 +184,17 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
     glcore::Shader shader("../gl-sandbox/assets/shaders/phong_light.glsl");
     
-    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.3F, 0.3F,glm::vec3(0.0F, 0.0F, -1.0F));
+    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.1, 0.1F,glm::vec3(0.0F, 0.0F, -1.0F));
 
 
-    glcore::PointLight plight1(glm::vec3(0.0F, 0.0F, 0.6F), 0.0F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.3F, 0.2F, 0.1F));
+    glcore::PointLight plight1(glm::vec3(0.0F, 0.0F, 1.0F), 0.0F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.3F, 0.2F, 0.1F));
 
-    glcore::PointLight plight2(glm::vec3(0.0F, 0.6F, 0.0F), 0.0F, 1.0F, glm::vec3(-4.0F, 2.0F, 0.0F), glm::vec3(0.3F, 0.1F, 0.1F));
+    glcore::PointLight plight2(glm::vec3(0.0F, 1.0F, 0.0F), 0.0F, 1.0F, glm::vec3(-4.0F, 2.0F, 0.0F), glm::vec3(0.3F, 0.1F, 0.1F));
+
+    // glcore::SpotLight slight1(glm::vec3(1.0F, 0.0F, 0.0F), 0.0F, 2.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.0F, -1.0F, 0.0F), glm::vec3(1.0F, 0.0F, 0.0F), 20.0F);
+    glcore::SpotLight slight1(glm::vec3(1.0F, 1.0F, 1.0F), 0.3F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.1F, 0.2F, 0.01F), glm::vec3(1.0F, 0.0F, 0.0F), 20.0F);
+
+    glcore::SpotLight slight2(glm::vec3(1.0F, 1.0F, 1.0F), 0.0F, 1.0F, glm::vec3(0.0F, -1.5F, 0.0F), glm::vec3(-100.0F, -1.0F, 0.0F), glm::vec3(1.0F, 0.0F, 0.0F), 20.0F);
 
     glcore::Material shinyMaterial = glcore::Material(1.0F, 32.0F);
     glcore::Material dullMaterial = glcore::Material(0.3F, 4.0F);
@@ -206,6 +211,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
         /* 카메라 업데이트 */
         camera.OnUpdateTmp(window, 0.0f);
+        slight1.SetFlash(camera.GetPosition() - glm::vec3(0.0F, 0.5F, 0.0F), camera.GetDirection());
 
         /* shader binding */
         shader.Bind();
@@ -215,6 +221,8 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         dlight.UseLight(shader);
         plight1.UseLight(shader);
         plight2.UseLight(shader);
+        slight1.UseLight(shader);
+        slight2.UseLight(shader);
 
         //* Object 1
         glm::mat4 model_matrix{1.0F};

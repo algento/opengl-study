@@ -50,7 +50,13 @@ struct PointLight {
     float ambient_intensity;
     float diffuse_intensity;
     vec3 position;
-    vec3 coefficient;
+    vec3 attenuation_coefficient;
+};
+
+struct SpotLight {
+    PointLight plight;
+    vec3 direction;
+    float cos_cutoff_angle;
 };
 
 struct Material {
@@ -65,18 +71,24 @@ uniform DirectionalLight u_directional_light;
 uniform vec3 u_eye_position;
 
 const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
+
 uniform int u_num_point_lights;
 uniform PointLight u_point_light[MAX_POINT_LIGHTS];
 
+uniform int u_num_spot_lights;
+uniform SpotLight u_spot_light[MAX_SPOT_LIGHTS];
+
 uniform Material u_material;
 
-vec4 CalculateLightFromDirection(vec3 color, float ambient_intensity, float diffuse_intensity, vec3 direction) {
+
+vec4 CalculateLightWithDirection(vec3 color, float ambient_intensity, float diffuse_intensity, vec3 direction) {
     // ambient light
     vec4 ambient_color = vec4(color, 1.0F) * ambient_intensity;
     
     // diffuse light
     float diffuse_factor = max(dot(normalize(v_normal), normalize(direction)), 0.0F);
-    vec4 diffuse_color = vec4(color, 1.0F) * diffuse_intensity * diffuse_factor;
+    vec4 diffuse_color = vec4(color * diffuse_intensity * diffuse_factor, 1.0F);
     
     // specular light
     vec4 specular_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);	
@@ -93,31 +105,64 @@ vec4 CalculateLightFromDirection(vec3 color, float ambient_intensity, float diff
         }
     }
     
-    return ambient_color + diffuse_color + specular_color;
+    return (ambient_color + diffuse_color + specular_color);
 }
 
 vec4 CalculateDirectionalLight() {
-    return CalculateLightFromDirection(u_directional_light.color, u_directional_light.ambient_intensity, u_directional_light.diffuse_intensity, u_directional_light.direction);
+    return CalculateLightWithDirection(u_directional_light.color, u_directional_light.ambient_intensity, u_directional_light.diffuse_intensity, u_directional_light.direction);
 }
 
-vec4 CalculatePointLight() {
+vec4 CalculatePointLight(PointLight light) {
+    vec3 vector_from_light_to_frag = v_frag_position - light.position;
+    float distance = length(vector_from_light_to_frag);
+    vec3 light_direction = normalize(vector_from_light_to_frag);
+    
+    float a = light.attenuation_coefficient.z; // quadratic
+    float b = light.attenuation_coefficient.y; // linear
+    float c = light.attenuation_coefficient.x; // constant
+    float attenuation = 1.0F / (a * distance * distance + b * distance + c);
+    
+    vec4 light_color = CalculateLightWithDirection(light.color, light.ambient_intensity, light.diffuse_intensity, light_direction);
+    return light_color * attenuation;
+}
+
+vec4 CalculatePointLights() {
     vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
+
     for (int i = 0; i < u_num_point_lights; i++) {
-        vec3 light_direction = v_frag_position - u_point_light[i].position;
-        float distance = length(light_direction);
-        light_direction = normalize(light_direction);
-        
-        float attenuation = 1.0F / (u_point_light[i].coefficient.x * distance * distance + u_point_light[i].coefficient.y * distance + u_point_light[i].coefficient.z);
-        
-        vec4 light_color = CalculateLightFromDirection(u_point_light[i].color, u_point_light[i].ambient_intensity, u_point_light[i].diffuse_intensity, light_direction);
-        total_color += (light_color * attenuation);
+        total_color += CalculatePointLight(u_point_light[i]);
+    }
+    return total_color;
+}
+
+vec4 CalculateSpotLight(SpotLight light) {
+    vec3 ray_direction = normalize(v_frag_position - light.plight.position);
+    float cos_light_to_frag_angle = dot(ray_direction, light.direction);
+
+    if (cos_light_to_frag_angle > light.cos_cutoff_angle) {
+        //* light 원점에서 fragment까지의 벡터와 light의 방향 벡터 사이의 각도가 cutoff_value보다 작을 때!
+        vec4 point_light_color = CalculatePointLight(light.plight);
+        // return point_light_color * (1.0F - (1.0F - cos_light_to_frag_angle) / (1.0F - light.cos_cutoff_angle));
+        return point_light_color * (1.0f - (1.0f - cos_light_to_frag_angle)*(1.0f/(1.0f - light.cos_cutoff_angle)));
+    }
+    else {
+        return vec4(0.0F, 0.0F, 0.0F, 0.0F);
+    }
+}
+
+vec4 CalculateSpotLights() {
+    vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
+    for (int i = 0; i < u_num_spot_lights; i++) {
+        total_color += CalculateSpotLight(u_spot_light[i]);
     }
     return total_color;
 }
 
 void main() {
-    vec4 directional_light_color = CalculateDirectionalLight();
-    vec4 point_light_color = CalculatePointLight();
-    // o_color = texture(u_texture, v_texture_coord) * (directional_light_color);
-    o_color = texture(u_texture, v_texture_coord) * (directional_light_color + point_light_color);
+    vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
+    total_color += CalculateDirectionalLight();
+    total_color += CalculatePointLights();
+    total_color += CalculateSpotLights();
+    
+    o_color = texture(u_texture, v_texture_coord) * total_color;
 }
