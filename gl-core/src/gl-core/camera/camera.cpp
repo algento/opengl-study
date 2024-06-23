@@ -46,17 +46,16 @@ PerspCamera::PerspCamera(float fov, float width, float height, float near,
 
 void PerspCamera::OnEvent(GuiEvent& event) {}
 
-bool PerspCamera::OnMouseScroll(GuiEvent& event) { return false; }
+bool PerspCamera::OnMouseScroll(GuiEvent& event) {}
 
 void PerspCamera::OnUpdate(float delta_time) {}
 
 void PerspCamera::OnUpdateTmp(void* window, float delta_time) {
+    const glm::vec2& mouse{UserInput::GetMouseX((GLFWwindow*)window),
+                           UserInput::GetMouseY((GLFWwindow*)window)};
     // 왼쪽 Alt를 누르고 마우스를 조작하면 Camera View를 변환한다.
     if (UserInput::IsKeyPressed((GLFWwindow*)window, KeyCode::LeftAlt)) {
-        const glm::vec2& mouse{UserInput::GetMouseX((GLFWwindow*)window),
-                               UserInput::GetMouseY((GLFWwindow*)window)};
         glm::vec2 scaled_delta = (mouse - mouse_position_) * kDeltaScale;
-        mouse_position_        = mouse;
 
         if (UserInput::IsMouseButtonPressed((GLFWwindow*)window,
                                             MouseCode::ButtonRight)) {
@@ -64,11 +63,19 @@ void PerspCamera::OnUpdateTmp(void* window, float delta_time) {
         } else if (UserInput::IsMouseButtonPressed((GLFWwindow*)window,
                                                    MouseCode::ButtonLeft)) {
             MouseRotate(scaled_delta);
-        } else if (UserInput::IsMouseButtonPressed((GLFWwindow*)window,
-                                                   MouseCode::ButtonMiddle)) {
-            MouseZoom(scaled_delta.y);
+        } else {
+            /* do nothing */
         }
     }
+
+    if (UserInput::IsKeyPressed((GLFWwindow*)window, KeyCode::LeftShift)) {
+        const glm::vec2& mouse{UserInput::GetMouseX((GLFWwindow*)window),
+                               UserInput::GetMouseY((GLFWwindow*)window)};
+        glm::vec2 scaled_delta = (mouse - mouse_position_) * 0.1F;
+        MouseZoom(scaled_delta.y);
+    } else {
+    }
+    mouse_position_ = mouse;
     UpdateViewMatrix();
 }
 
@@ -108,8 +115,8 @@ void PerspCamera::UpdateViewMatrix() {
                                 glm::toMat4(quat));
 
     //* Classic calculation
-    // view_matrix_ =
-    //     glm::lookAt(position_, position_ + GetForwardAxis(), GetUpAxis());
+    /* view_matrix_ =
+        glm::lookAt(position_, position_ + GetForwardAxis(), GetUpAxis()); */
 }
 
 glm::vec3 PerspCamera::GetUpAxis() const {
@@ -125,8 +132,8 @@ glm::vec3 PerspCamera::GetRightAxis() const {
     return glm::rotate(CalculateOrientation(), glm::vec3(1.0F, 0.0F, 0.0F));
 
     //* Classic calculation
-    // return glm::normalize(
-    //     glm::cross(GetForwardAxis(), glm::vec3(0.0F, 1.0F, 0.0F)));
+    /* return glm::normalize(
+        glm::cross(GetForwardAxis(), glm::vec3(0.0F, 1.0F, 0.0F))); */
 }
 
 glm::vec3 PerspCamera::GetForwardAxis() const {
@@ -134,13 +141,13 @@ glm::vec3 PerspCamera::GetForwardAxis() const {
     return glm::rotate(CalculateOrientation(), glm::vec3(0.0F, 0.0F, -1.0F));
 
     //* Classic calculation
-    // glm::vec3 front;
-    // float yaw   = -orientation_.y;
-    // float pitch = -orientation_.x;
-    // front.x     = sin(yaw) * cos(pitch);
-    // front.y     = sin(pitch);
-    // front.z     = -cos(yaw) * cos(pitch);
-    // return glm::normalize(front);
+    /*  glm::vec3 front;
+    float yaw   = -orientation_.y;
+    float pitch = -orientation_.x;
+    front.x     = sin(yaw) * cos(pitch);
+    front.y     = sin(pitch);
+    front.z     = -cos(yaw) * cos(pitch);
+    return glm::normalize(front); */
 }
 
 glm::quat PerspCamera::CalculateOrientation() const {

@@ -29,6 +29,11 @@ class UserInput {
         return state == GLFW_PRESS;
     }
 
+    static float CheckMouseScrollYOffset(GLFWwindow* window) {
+        auto state = glfwGetWindowUserPointer(window);
+        
+    }
+
     static glm::vec2 GetMousePosition(GLFWwindow* window) {
         double x = 0.0F;
         double y = 0.0F;
