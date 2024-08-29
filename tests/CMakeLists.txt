@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(gl-sandbox)
+project(gl-test)
 
 # CMake Settings-------------------------------------------------------------##
 set(CMAKE_CXX_STANDARD 17)
@@ -20,13 +20,11 @@ get_target_property(GLFW3_INCLUDE_DIRS glfw INTERFACE_INCLUDE_DIRECTORIES)
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glad/lib/cmake/glad)
 find_package(glad CONFIG REQUIRED)
 
-file(GLOB_RECURSE GLSANDBOX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+add_executable(test_gui_event ${PROJECT_SOURCE_DIR}/gl-core/test_gui_event.cpp)
 
-add_executable(gl-sandbox ${GLSANDBOX_SOURCES})
+set_target_properties(test_gui_event PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                                                ${CMAKE_SOURCE_DIR}/bin)
 
-set_target_properties(gl-sandbox PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                                            ${CMAKE_SOURCE_DIR}/bin)
+target_include_directories(test_gui_event PUBLIC ${GLCORE_SRC_DIR})
 
-target_include_directories(gl-sandbox PUBLIC ${GLCORE_SRC_DIR})
-
-target_link_libraries(gl-sandbox PUBLIC gl-core)
+target_link_libraries(test_gui_event PUBLIC gl-core)

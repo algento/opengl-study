@@ -51,6 +51,7 @@ class EventDispatcher {
 
  private:
     std::map<uint32_t, listener_t> listeners_;
-    std::mutex mutex_;
+    // std::mutex mutex_;
 };
+
 }  // namespace glcore

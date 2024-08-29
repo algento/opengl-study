@@ -32,7 +32,8 @@
 1. [GLSL Tutorial](https://www.opentutorials.org/module/3659)
 1. [goden's 대학교 OpenGL 스터디](https://goeden.tistory.com/category/College%20Study/OpenGL)
 1. [Computer Graphics W/OpenGL](https://github.com/geoo993/ComputerGraphicsWithOpenGL)
-1. [VisPy Documentation: Modern OpenGL](https://vispy.org/getting_started/modern-gl.html)
+   1. [VisPy Documentation: Modern OpenGL](https://vispy.org/getting_started/modern-gl.html)
+1. [GLSL Tutorial](http://www.lighthouse3d.com/tutorials/glsl-tutorial/)
 
 ### msdf-gen
 
@@ -47,6 +48,7 @@
 1. [Udemy: Modern OpenGL C++ 3D Game Tutorial Series & 3D Rendering](https://www.udemy.com/course/opengl-tutorials/?LSNPUBID=p4oHS4cJv*k&siteID=p4oHS4cJv.k-UuZ1llTGog7Wk4KBf.RwFg&utm_source=adwords&utm_medium=udemyads&utm_campaign=DSA_Catchall_la.EN_cc.ROW&utm_content=deal4584&utm_term=_._ag_88010211481_._ad_535397282064_._kw__._de_c_._dm__._pl__._ti_dsa-841699838863_._li_1009886_._pd__._&matchtype=&gclid=CjwKCAiAjs2bBhACEiwALTBWZSHUs14A5ANh020wiBDUhCL6CXb5Ih5mtjXzlarFmgu8hI5eWverJBoCmC0QAvD_BwE)
    - [github](https://github.com/PacktPublishing/Modern-OpenGL-C-3D-Game-Tutorial-Series-3D-Rendering/tree/master/Modern-OpenGL-Tutorials-master)
 1. [Intro. to Computer Graphics (2018) [MIT]](https://www.youtube.com/playlist?list=PLQ3UicqQtfNthIjEQewciei85O2OCapZp)
+1. [[연재강좌] [3D렌더링 기초] 1. OpenGL 윈도우 만들기](https://gamecodi.com/8884/%EC%97%B0%EC%9E%AC%EA%B0%95%EC%A2%8C-3d%EB%A0%8C%EB%8D%94%EB%A7%81-%EA%B8%B0%EC%B4%88-1-opengl-%EC%9C%88%EB%8F%84%EC%9A%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0)
 
 ### Books
 
