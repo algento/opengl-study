@@ -2,8 +2,8 @@
 #version 330 core
 
 layout(location = 0) in vec3 a_position;
-layout(location = 1) in vec4 a_color;
-layout(location = 2) in vec2 a_texcoord;
+layout(location = 1) in vec2 a_texcoord;
+layout(location = 2) in vec4 a_color;
 layout(location = 3) in vec3 a_normal; 
 
 uniform mat4 u_view_projection_matrix;
@@ -159,7 +159,8 @@ vec4 CalculateSpotLights() {
 }
 
 void main() {
-    vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
+    // vec4 total_color = vec4(0.0F, 0.0F, 0.0F, 0.0F);
+    vec4 total_color = v_color;
     total_color += CalculateDirectionalLight();
     total_color += CalculatePointLights();
     total_color += CalculateSpotLights();

@@ -65,8 +65,8 @@ void TriangleMesh::Create(std::vector<TriangleMesh::VertexInput>& vertices,
 
     for (size_t i = 0; i < vertices.size(); i++) {
         vertices_layout[i].position = vertices[i].position;
-        vertices_layout[i].color    = vertices[i].color;
         vertices_layout[i].texcoord = vertices[i].texcoord;
+        vertices_layout[i].color    = vertices[i].color;
     }
 
     CalculateAverageNormals(vertices, indices, vertices_layout);
@@ -74,8 +74,8 @@ void TriangleMesh::Create(std::vector<TriangleMesh::VertexInput>& vertices,
         (float*)vertices_layout.data(),
         (uint32_t)vertices_layout.size() * sizeof(TriangleMesh::VertexLayout),
         GlBufferLayout({{"a_position", GlBufferElement::DataType::kFloat3},
-                        {"a_color", GlBufferElement::DataType::kFloat4},
                         {"a_texcoord", GlBufferElement::DataType::kFloat2},
+                        {"a_color", GlBufferElement::DataType::kFloat4},
                         {"a_normal", GlBufferElement::DataType::kFloat3}}),
         indices.data(), indices.size());
 }

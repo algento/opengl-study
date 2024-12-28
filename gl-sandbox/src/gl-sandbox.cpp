@@ -46,10 +46,10 @@ std::shared_ptr<glcore::Mesh> CreateRectangle() {
     };
 
     std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
-    vertices[0] = {{-0.5f, -0.5f, 0.0f}, {1.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 0.0F}};
-    vertices[1] = {{0.5f, -0.5f, 1.0f}, {0.0F, 1.0F, 0.0F, 1.0F}, {1.0F, 0.0F}};
-    vertices[2] = {        {0.5f, 0.5f, 0.0f}, {0.0F, 0.0F, 1.0F, 1.0F}, {1.0F, 1.0F}};
-    vertices[3] = {{-0.5F, 0.5F, 0.0F},{0.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 1.0F}};
+    vertices[0] = {{-0.5f, -0.5f, 0.0f},  {0.0F, 0.0F},{1.0F, 0.0F, 0.0F, 1.0F}};
+    vertices[1] = {{0.5f, -0.5f, 1.0f}, {1.0F, 0.0F}, {0.0F, 1.0F, 0.0F, 1.0F}};
+    vertices[2] = {{0.5f, 0.5f, 0.0f}, {1.0F, 1.0F}, {0.0F, 0.0F, 1.0F, 1.0F}};
+    vertices[3] = {{-0.5F, 0.5F, 0.0F}, {0.0F, 1.0F},{0.0F, 0.0F, 0.0F, 1.0F}};
 
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
@@ -71,10 +71,10 @@ std::shared_ptr<glcore::Mesh> CreateFloor() {
     };
    
     std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
-    vertices[0] = {{-10.0F, 0.0F, -10.0F}, {1.0F, 1.0F, 1.0F, 1.0F}, {0.0F, 0.0F}};
-    vertices[1] = {{10.0F, 0.0F, -10.0F}, {1.0F, 1.0F, 1.0F, 1.0F}, {1.0F, 0.0F}};
-    vertices[2] = {{10.0F, 0.0F, 10.0F}, {1.0F, 1.0F, 1.0F, 1.0F}, {1.0F, 1.0F}};
-    vertices[3] = {{-10.0F, 0.0F, 10.0F},{1.0F, 1.0F, 1.0F, 1.0F}, {0.0F, 1.0F}};
+    vertices[0] = {{-10.0F, 0.0F, -10.0F}, {0.0F, 0.0F}, {0.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[1] = {{10.0F, 0.0F, -10.0F}, {1.0F, 0.0F}, {0.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[2] = {{10.0F, 0.0F, 10.0F}, {1.0F, 1.0F}, {0.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[3] = {{-10.0F, 0.0F, 10.0F}, {0.0F, 1.0F},{0.0F, 0.0F, 0.0F, 0.0F}};
 
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
@@ -93,10 +93,10 @@ std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
     };
 
     std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
-    vertices[0] = {{-1.0f, -1.0f, 0.0f}, {1.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 0.0F}};
-    vertices[1] = {{0.0f, -1.0f, 1.0f}, {0.0F, 1.0F, 0.0F, 1.0F}, {0.5F, 0.0F}};
-    vertices[2] = {        {1.0f, -1.0f, 0.0f}, {0.0F, 0.0F, 1.0F, 1.0F}, {1.0F, 0.0F}};
-    vertices[3] = {{0.0F, 1.0F, 0.0F},{0.0F, 0.0F, 0.0F, 1.0F}, {0.5F, 1.0F}};
+    vertices[0] = {{-1.0f, -1.0f, 0.0f}, {0.0F, 0.0F}, {1.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[1] = {{0.0f, -1.0f, 1.0f}, {0.5F, 0.0F}, {0.0F, 1.0F, 0.0F, 0.0F}};
+    vertices[2] = {{1.0f, -1.0f, 0.0f}, {1.0F, 0.0F}, {0.0F, 1.0F, 0.0F, 0.0F}};
+    vertices[3] = {{0.0F, 1.0F, 0.0F}, {0.5F, 1.0F},{0.0F, 0.0F, 0.0F, 0.0F}};
 
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
@@ -231,6 +231,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         shader.SetMat4("u_model_matrix", model_matrix);
         shinyMaterial.UseMaterial(shader);
         brick_texture.Bind();
+        // plain_texture.Bind();
         obj1->Render();
         
         //* Object 2
@@ -250,6 +251,7 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         dirt_texture.Bind();
         floor->Render();
         glcore::Shader::Unbind();
+        glcore::Texture::Unbind();
         /* (GLFW) front and back buffers를 스왑 */
         glfwSwapBuffers(window);
 

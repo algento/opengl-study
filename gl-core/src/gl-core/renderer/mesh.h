@@ -41,14 +41,14 @@ class TriangleMesh : public Mesh {
  public:
     struct VertexInput {
         glm::vec3 position;
-        glm::vec4 color;
         glm::vec2 texcoord;
+        glm::vec4 color;
     };
 #pragma pack(push, 1)
     struct VertexLayout {
         glm::vec3 position;
-        glm::vec4 color;
         glm::vec2 texcoord;
+        glm::vec4 color;
         glm::vec3 normal;
     };
 #pragma pack(pop)
