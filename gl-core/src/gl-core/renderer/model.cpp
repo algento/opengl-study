@@ -35,15 +35,14 @@ void Model::Load(const std::string& path) {
     Assimp::Importer importer;
 
     // - aiProcess_Triangulate: 삼각형으로 변환한다. (간단한 모델로 처리하기 위해)
-    // - aiProcess_FlipUVs: UV 좌표를 뒤집는다.
+    // - aiProcess_FlipUVs: UV 좌표를 뒤집는다. 일반적인 이미지 파일과 OpenGL 텍스처 좌표계의 y축이 반대방향이기 때문이다.
     // - aiProcess_JoinIdenticalVertices: 중복된 정점을 하나로 합친다.
     // - aiProcess_GenSmoothNormals: 정점의 normal을 생성한다.
 
-    name_ = GetFileNameWithoutExtention(path);
-    std::cout << name_ << "\n";
+    name_                = GetFileNameWithoutExtention(path);
     const aiScene* scene = importer.ReadFile(
-        path, aiProcess_Triangulate | aiProcess_FlipUVs |
-                  aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+        path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+                  aiProcess_JoinIdenticalVertices);
 
     if (scene == nullptr) {
         std::cout << "Model " << path
@@ -54,7 +53,7 @@ void Model::Load(const std::string& path) {
 
     // 루트 노드부터 시작하여 재귀적으로 노드를 처리한다.
     ProcessNode(scene->mRootNode, scene);
-    std::cout << "Nodes are processed\n";
+
     // scene에 있는 material을 처리한다.
     LoadMaterials(scene);
 }
@@ -138,7 +137,6 @@ void Model::LoadMaterials(const aiScene* scene) {
     for (size_t i = 0; i < scene->mNumMaterials; i++) {
         aiMaterial* material = scene->mMaterials[i];
         texture_lists_[i]    = nullptr;
-        std::cout << material->GetTextureCount(aiTextureType_DIFFUSE) << "\n";
         // diffuse type의 텍스쳐가 존재한다면 로드한다.(빛이 비치면 컬러가 나타나는 것을 표현하는 텍스쳐 타입)
         if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0u) {
             aiString texture_path;
@@ -154,7 +152,6 @@ void Model::LoadMaterials(const aiScene* scene) {
                 texture_lists_[i] = std::make_unique<Texture2D>(TextureImage(
                     GetFileNameWithoutExtention(filename), texture_filepath));
             }
-            std::cout << std::string(texture_path.C_Str()) << "\n";
         }
         // diffuse type의 텍스쳐가 존재하지 않는다면 기본 텍스쳐를 로드한다.
         if (texture_lists_[i] == nullptr) {

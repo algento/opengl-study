@@ -21,7 +21,7 @@ void TextureImage::LoadImage(const std::string& file_path) {
     int32_t channels{1};
 
     // Load image using stb_image
-    stbi_set_flip_vertically_on_load(0);
+    stbi_set_flip_vertically_on_load(1);
     Byte* data = stbi_load(file_path.c_str(), (int*)&width_, (int*)&height_,
                            (int*)&channels, 0);
     std::cout << "Image loaded: " << file_path << " (" << width_ << "x"

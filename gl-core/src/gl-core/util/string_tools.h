@@ -24,7 +24,6 @@ inline std::string ChangePathSeparator(const std::string& path) {
 }
 
 inline std::string GetFileNameWithoutExtention(const std::string& path) {
-    std::cout << path << std::endl;
     std::string result = ChangePathSeparator(path);
     size_t start_idx   = result.rfind('/');
     size_t end_idx     = result.rfind('.');
@@ -32,7 +31,6 @@ inline std::string GetFileNameWithoutExtention(const std::string& path) {
 }
 
 inline std::string GetFileNameWithExtention(const std::string& path) {
-    std::cout << path << std::endl;
     std::string result = ChangePathSeparator(path);
     size_t start_idx   = result.rfind('/');
     return result.substr(start_idx + 1);
