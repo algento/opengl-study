@@ -26,6 +26,7 @@
 #include "gl-core/renderer/light.h"
 #include "gl-core/renderer/material.h"
 #include "gl-core/renderer/mesh.h"
+#include "gl-core/renderer/model.h"
 #include "gl-core/shader/shader.h"
 
 //NOLINTBEGIN
@@ -169,6 +170,14 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     auto obj2 = CreateTetrahedron();
     auto floor = CreateFloor();
 
+    /* 모델 로딩 ---------------------------------------------------------------*/
+    glcore::Model xwing= glcore::Model();
+    xwing.Load("../gl-sandbox/assets/models/x-wing.obj");
+
+    glcore::Model luke= glcore::Model();
+    luke.Load("../gl-sandbox/assets/models/luke.fbx");
+
+
     /* 카메라 생성 --------------------------------------------------------------*/
     glcore::PerspCamera camera(45.0f, 640.0f, 480.0f, 0.1f, 100.0f);
 
@@ -242,6 +251,22 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         dullMaterial.UseMaterial(shader);
         dirt_texture.Bind();
         obj2->Render();
+
+        //* X-Wing
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(-7.0f, 0.0f, 10.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.006f, 0.006f, 0.006f));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        xwing.Render();
+
+        //* Luke
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(-1.0f, 0.0f, 0.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.1F, 0.1F, 0.1F));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        luke.Render();
 
         //* Floor
         model_matrix = glm::mat4(1.0f);

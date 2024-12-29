@@ -39,25 +39,19 @@ class Mesh {
 
 class TriangleMesh : public Mesh {
  public:
-    struct VertexInput {
-        glm::vec3 position;
-        glm::vec2 texcoord;
-        glm::vec4 color;
-    };
 #pragma pack(push, 1)
-    struct VertexLayout {
-        glm::vec3 position;
-        glm::vec2 texcoord;
-        glm::vec4 color;
-        glm::vec3 normal;
+    struct VertexInput {
+        glm::vec3 position{};
+        glm::vec2 texcoord{};
+        glm::vec4 color{};
+        glm::vec3 normal{};
     };
 #pragma pack(pop)
     void Create(std::vector<VertexInput>& vertices,
-                std::vector<uint32_t>& indices);
+                std::vector<uint32_t>& indices, bool avg_normal = true);
 
  private:
-    static void CalculateAverageNormals(
-        std::vector<VertexInput>& vertices, std::vector<uint32_t>& indices,
-        std::vector<VertexLayout>& vertices_layout);
+    static void CalculateAverageNormals(std::vector<VertexInput>& vertices,
+                                        std::vector<uint32_t>& indices);
 };
 }  // namespace glcore

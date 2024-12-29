@@ -21,6 +21,7 @@ set(GLSANDBOX_SRC_DIR ${CMAKE_SOURCE_DIR}/gl-sandbox/src)
 
 option(USE_GLEW "Use GLEW" ON)
 
+add_compile_definitions(ROOT_DIR="${CMAKE_SOURCE_DIR}")
 # Subdirectories ------------------------------------------------------------##
 add_subdirectory(gl-core)
 add_subdirectory(gl-sandbox)
