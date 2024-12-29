@@ -98,6 +98,10 @@ class PerspCamera : public CameraBase {
     /// @brief Get forward axis in world space (the vector from camera center to the focal point)
     [[nodiscard]] glm::vec3 GetForwardAxis() const;
 
+    [[nodiscard]] glm::vec3 GetDirection() const {
+        return glm::normalize(GetForwardAxis());
+    }
+
     [[nodiscard]] float fov() const { return fov_; }
     [[nodiscard]] float near() const { return near_; }
     [[nodiscard]] float far() const { return far_; }

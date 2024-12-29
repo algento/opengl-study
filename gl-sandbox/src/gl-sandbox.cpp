@@ -23,7 +23,10 @@
 
 #include "gl-core/camera/camera.h"
 #include "gl-core/renderer/buffer_layout.h"
+#include "gl-core/renderer/light.h"
+#include "gl-core/renderer/material.h"
 #include "gl-core/renderer/mesh.h"
+#include "gl-core/renderer/model.h"
 #include "gl-core/shader/shader.h"
 
 //NOLINTBEGIN
@@ -37,51 +40,69 @@ std::shared_ptr<glcore::Mesh> CreateRectangle() {
     // |         |
     // r0 ----- r1
     // clang-format off
-    float vertices[] = {
-        -0.5F, -0.5F, 0.0F,  0.0F, 0.0F,// r0
-        0.5F, -0.5F, 0.0F, 1.0F, 0.0F,// r1
-        0.5F, 0.5F, 0.0F, 1.0F, 1.0F, // r2
-        -0.5F, 0.5F, 0.0F, 0.0F, 1.0F // r3
-    };
-    uint32_t indices[] = {
-        0, 1, 2,  // triangle 1, counter-clockwise
-        2, 3, 0   // triangle 2, counter-clockwise
 
+    std::vector<uint32_t> indices = {
+        0, 1, 2, //
+        2, 3, 0
     };
+
+    std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
+    vertices[0] = {{-0.5f, -0.5f, 0.0f},  {0.0F, 0.0F},{1.0F, 0.0F, 0.0F, 1.0F}};
+    vertices[1] = {{0.5f, -0.5f, 1.0f}, {1.0F, 0.0F}, {0.0F, 1.0F, 0.0F, 1.0F}};
+    vertices[2] = {{0.5f, 0.5f, 0.0f}, {1.0F, 1.0F}, {0.0F, 0.0F, 1.0F, 1.0F}};
+    vertices[3] = {{-0.5F, 0.5F, 0.0F}, {0.0F, 1.0F},{0.0F, 0.0F, 0.0F, 1.0F}};
+
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
-    auto mesh = std::make_shared<glcore::Mesh>();
-    mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 6); //NOLINT
+    auto mesh = std::make_shared<glcore::TriangleMesh>();
+    mesh->Create(vertices, indices); //NOLINT
+    return mesh;
+}
+
+std::shared_ptr<glcore::Mesh> CreateFloor() {
+    /* VBO -------------------------------------------------------------------*/
+    // r3 ----- r2
+    // |         |
+    // r0 ----- r1
+    // clang-format off
+
+    std::vector<uint32_t> indices = {
+        0, 1, 2, //
+        2, 3, 0
+    };
+   
+    std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
+    vertices[0] = {{-10.0F, 0.0F, -10.0F}, {0.0F, 0.0F}, {0.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[1] = {{10.0F, 0.0F, -10.0F}, {1.0F, 0.0F}, {0.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[2] = {{10.0F, 0.0F, 10.0F}, {1.0F, 1.0F}, {0.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[3] = {{-10.0F, 0.0F, 10.0F}, {0.0F, 1.0F},{0.0F, 0.0F, 0.0F, 0.0F}};
+
+    auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
+
+    auto mesh = std::make_shared<glcore::TriangleMesh>();
+    mesh->Create(vertices, indices); //NOLINT
     return mesh;
 }
 
 std::shared_ptr<glcore::Mesh> CreateTetrahedron() {
 
-    unsigned int indices[] = {
+    std::vector<uint32_t> indices = {
         0, 3, 1, //
         1, 3, 2,//
         2, 3, 0,//
         0, 1, 2 //
     };
-    
-    // float vertices[] = {
-    //     -1.0f, -1.0f, 0.0f,// r0
-    //     0.0f, -1.0f, 1.0f, // r1
-    //     1.0f, -1.0f, 0.0f, // r2
-    //     0.0f, 1.0f, 0.0f
-    // };
-    // auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}});
 
-    float vertices[] = {
-        -1.0f, -1.0f, 0.0f, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F,// r0
-        0.0f, -1.0f, 1.0f, 0.0F, 1.0F, 0.0F, 1.0F, 0.5F, 0.0F,// r1
-        1.0f, -1.0f, 0.0f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.0F, // r2
-        0.0f, 1.0f, 0.0f,0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F
-    };
+    std::vector<glcore::TriangleMesh::VertexInput> vertices(4);
+    vertices[0] = {{-1.0f, -1.0f, 0.0f}, {0.0F, 0.0F}, {1.0F, 0.0F, 0.0F, 0.0F}};
+    vertices[1] = {{0.0f, -1.0f, 1.0f}, {0.5F, 0.0F}, {0.0F, 1.0F, 0.0F, 0.0F}};
+    vertices[2] = {{1.0f, -1.0f, 0.0f}, {1.0F, 0.0F}, {0.0F, 1.0F, 0.0F, 0.0F}};
+    vertices[3] = {{0.0F, 1.0F, 0.0F}, {0.5F, 1.0F},{0.0F, 0.0F, 0.0F, 0.0F}};
+
     auto layout = glcore::GlBufferLayout({{"a_position", glcore::GlBufferElement::DataType::kFloat3}, {"a_color", glcore::GlBufferElement::DataType::kFloat4}, {"a_texcoord", glcore::GlBufferElement::DataType::kFloat2}});
 
-    auto mesh = std::make_shared<glcore::Mesh>();
-    mesh->Create(vertices, (uint32_t)sizeof(vertices), layout, indices, 12); //NOLINT
+    auto mesh = std::make_shared<glcore::TriangleMesh>();
+    mesh->Create(vertices, indices); //NOLINT
     return mesh;
 }
 
@@ -147,6 +168,15 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     // auto mesh = CreateRectangle();
     auto obj1 = CreateTetrahedron();
     auto obj2 = CreateTetrahedron();
+    auto floor = CreateFloor();
+
+    /* 모델 로딩 ---------------------------------------------------------------*/
+    glcore::Model xwing= glcore::Model();
+    xwing.Load("../gl-sandbox/assets/models/x-wing.obj");
+
+    glcore::Model luke= glcore::Model();
+    luke.Load("../gl-sandbox/assets/models/luke.fbx");
+
 
     /* 카메라 생성 --------------------------------------------------------------*/
     glcore::PerspCamera camera(45.0f, 640.0f, 480.0f, 0.1f, 100.0f);
@@ -155,14 +185,28 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     auto brick_texture = glcore::Texture2D(glcore::TextureImage("brick_texture", "../gl-sandbox/assets/textures/brick.png"));
 
     auto dirt_texture = glcore::Texture2D(glcore::TextureImage("dirt_texture", "../gl-sandbox/assets/textures/dirt.png"));
+    
+    auto plain_texture = glcore::Texture2D(glcore::TextureImage("plain_texture", "../gl-sandbox/assets/textures/plain.png"));
+
+
 
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
-    glcore::Shader shader("../gl-sandbox/assets/shaders/example1.glsl");
-    shader.Bind();
-    shader.SetMat4("u_view_projection_matrix",
-                   camera.GetViewProjectionMatrix());
-    glcore::Shader::Unbind();
+    glcore::Shader shader("../gl-sandbox/assets/shaders/phong_light.glsl");
     
+    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.1, 0.1F,glm::vec3(0.0F, 0.0F, -1.0F));
+
+
+    glcore::PointLight plight1(glm::vec3(0.0F, 0.0F, 1.0F), 0.0F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.3F, 0.2F, 0.1F));
+
+    glcore::PointLight plight2(glm::vec3(0.0F, 1.0F, 0.0F), 0.0F, 1.0F, glm::vec3(-4.0F, 2.0F, 0.0F), glm::vec3(0.3F, 0.1F, 0.1F));
+
+    // glcore::SpotLight slight1(glm::vec3(1.0F, 0.0F, 0.0F), 0.0F, 2.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.0F, -1.0F, 0.0F), glm::vec3(1.0F, 0.0F, 0.0F), 20.0F);
+    glcore::SpotLight slight1(glm::vec3(1.0F, 1.0F, 1.0F), 0.3F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.1F, 0.2F, 0.01F), glm::vec3(1.0F, 0.0F, 0.0F), 20.0F);
+
+    glcore::SpotLight slight2(glm::vec3(1.0F, 1.0F, 1.0F), 0.0F, 1.0F, glm::vec3(0.0F, -1.5F, 0.0F), glm::vec3(-100.0F, -1.0F, 0.0F), glm::vec3(1.0F, 0.0F, 0.0F), 20.0F);
+
+    glcore::Material shinyMaterial = glcore::Material(1.0F, 32.0F);
+    glcore::Material dullMaterial = glcore::Material(0.3F, 4.0F);
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
         double now = glfwGetTime();
@@ -176,21 +220,63 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
         /* 카메라 업데이트 */
         camera.OnUpdateTmp(window, 0.0f);
+        slight1.SetFlash(camera.GetPosition() - glm::vec3(0.0F, 0.5F, 0.0F), camera.GetDirection());
 
         /* shader binding */
         shader.Bind();
         shader.SetMat4("u_view_projection_matrix",
                        camera.GetViewProjectionMatrix());
-        glm::mat4 model_matrix{1};
-        shader.SetMat4("u_model_matrix", model_matrix);
-        brick_texture.Bind();
-        obj1->Render();
+        shader.SetFloat3("u_eye_position", camera.GetPosition());
+        dlight.UseLight(shader);
+        plight1.UseLight(shader);
+        plight2.UseLight(shader);
+        slight1.UseLight(shader);
+        slight2.UseLight(shader);
 
-        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, 1.5f));
+        //* Object 1
+        glm::mat4 model_matrix{1.0F};
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -2.5f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        brick_texture.Bind();
+        // plain_texture.Bind();
+        obj1->Render();
+        
+        //* Object 2
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, -2.5f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        dullMaterial.UseMaterial(shader);
         dirt_texture.Bind();
         obj2->Render();
+
+        //* X-Wing
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(-7.0f, 0.0f, 10.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.006f, 0.006f, 0.006f));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        xwing.Render();
+
+        //* Luke
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(-1.0f, 0.0f, 0.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.1F, 0.1F, 0.1F));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        luke.Render();
+
+        //* Floor
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, -2.0f, -0.0f));
+        shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shader);
+        dirt_texture.Bind();
+        floor->Render();
         glcore::Shader::Unbind();
+        glcore::Texture::Unbind();
         /* (GLFW) front and back buffers를 스왑 */
         glfwSwapBuffers(window);
 

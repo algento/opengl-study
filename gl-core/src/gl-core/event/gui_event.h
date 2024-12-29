@@ -1,5 +1,3 @@
-#include <utility>
-
 /**
  * @file gui_event.h
  * @author Sejong Heo (tromberx@gmail.com)
@@ -12,22 +10,24 @@
  */
 
 #pragma once
-#include "gl-core/event/event_dispatcher.h"
-
+#include <functional>
 namespace glcore {
 #define BIT(x)       (1 << x)  // NOLINT
 #define TO_STRING(x) #x        // NOLINT
 
-enum class EventType : uint16_t {
+#define GUI_EVENT_CLASS_SETTING(TYPE) \
+    using GuiEvent::handled;          \
+    using GuiEvent::SetHandled;       \
+    using GuiEvent::type;             \
+    static GuiEventType GetStaticType() { return GuiEventType::TYPE; }
+
+enum class GuiEventType : uint32_t {
     kNone = 0,
     kWindowClose,
     kWindowResize,
     kWindowFocus,
     kWindowLostFocus,
     kWindowMoved,
-    kApplicationTick,
-    kApplicationUpdate,
-    kApplicationRender,
     kKeyPressed,
     kKeyReleased,
     kKeyTyped,
@@ -38,40 +38,49 @@ enum class EventType : uint16_t {
     kAll
 };
 
-enum EventCategory : uint32_t {
-    kNone                  = BIT(17),
-    kEventCategoryInput    = BIT(18),  // NOLINT
-    kEventCategoryKeyboard = BIT(19),  // NOLINT
-    kEventCategoryMouse    = BIT(20),  // NOLINT
-};
-
 class GuiEvent {
  public:
-    GuiEvent(std::string name, EventType type, EventCategory category)
-        : id_((uint32_t)type + (uint32_t)category),
-          name_(std::move(name)),
-          type_(type),
-          category_(category) {}
+    explicit GuiEvent(GuiEventType type) : type_(type) {}
+    GuiEvent(const GuiEvent &)            = default;
+    GuiEvent &operator=(const GuiEvent &) = default;
+    GuiEvent(GuiEvent &&)                 = default;
+    GuiEvent &operator=(GuiEvent &&)      = default;
+    virtual ~GuiEvent()                   = default;
 
-    [[nodiscard]] uint32_t id() const { return id_; }
-    [[nodiscard]] EventType type() const { return type_; }
-    [[nodiscard]] EventCategory category() const { return category_; }
-    [[nodiscard]] const std::string& name() const { return name_; }
+    [[nodiscard]] GuiEventType type() const { return type_; }
     [[nodiscard]] bool handled() const { return handled_; }
+    [[nodiscard]] virtual std::string ToString() const = 0;
 
     void SetHandled(bool handled) { handled_ = handled; }
-    bool IsInCategory(EventCategory category) {
-        return (category & category_) != 0;
+
+ protected:
+    bool handled_{false};
+    GuiEventType type_;
+};
+
+class GuiEventHandler {
+ public:
+    explicit GuiEventHandler(GuiEvent &event) : event_(event) {}
+
+    // F는 일반적으로 입력하지 않고 컴파일러가 추론하게 한다.
+    // template <typename T, typename F>
+    template <typename T>
+    bool Process(const std::function<bool(T &)> &fn) {
+        bool check_event_type = event_.type() == T::GetStaticType();  //NOLINT
+        if (check_event_type) {
+            // event_.SetHandled(event_.handled() | fn(*((T *)&event_)));
+            event_.SetHandled(event_.handled() | fn(static_cast<T &>(event_)));
+        }
+        return check_event_type;
     }
 
  private:
-    uint32_t id_{0};
-    bool handled_{false};
-    std::string name_;
-    EventType type_;
-    EventCategory category_;
+    // TODO: change to safe type
+    GuiEvent &event_;  //NOLINT
 };
 
-using GuiEventDispatcher = EventDispatcher<GuiEvent, bool, uint32_t>;
+inline std::ostream &operator<<(std::ostream &os, const GuiEvent &e) {
+    return os << e.ToString();
+}
 
 }  // namespace glcore
