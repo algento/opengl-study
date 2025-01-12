@@ -12,6 +12,8 @@
 
 #include <iostream>
 
+#include <glm/gtx/string_cast.hpp>
+
 #include "gl-core/renderer/texture.h"
 #include "gl-core/renderer/texture_image.h"
 
@@ -188,13 +190,11 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
     
     auto plain_texture = glcore::Texture2D(glcore::TextureImage("plain_texture", "../gl-sandbox/assets/textures/plain.png"));
 
-
-
     /* Shader 설정 및 컴파일 ----------------------------------------------------*/
     glcore::Shader shader("../gl-sandbox/assets/shaders/phong_light.glsl");
     
-    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.1, 0.1F,glm::vec3(0.0F, 0.0F, -1.0F));
-
+    glcore::DirectionalLight dlight(glm::vec3(1.0F, 1.0F, 1.0F), 0.1, 0.3F, glm::vec3(-10.0F, -10.0F, -10.0F));
+    dlight.CreateShadwoMap(2048, 2048);
 
     glcore::PointLight plight1(glm::vec3(0.0F, 0.0F, 1.0F), 0.0F, 1.0F, glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.3F, 0.2F, 0.1F));
 
@@ -207,34 +207,105 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
 
     glcore::Material shinyMaterial = glcore::Material(1.0F, 32.0F);
     glcore::Material dullMaterial = glcore::Material(0.3F, 4.0F);
+
+    glcore::Shader shadow_shader("../gl-sandbox/assets/shaders/directional_light_shadow.glsl");
+
     /* 랜더링 루프 --------------------------------------------------------------*/
     while (glfwWindowShouldClose(window) == GLFW_FALSE) {
         double now = glfwGetTime();
         delta_time = now - last_time;
         last_time  = now;
-        /* 배경색 설정 */
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);  // dark grey
+        
+        glm::mat4 model_matrix{1.0F};
+        //* =====================================================================*//
+        /* shadow map */
+        shadow_shader.Bind();
+        
+        glViewport(0, 0, static_cast<GLsizei>(dlight.shadow_map()->shadow_width()), static_cast<GLsizei>(dlight.shadow_map()->shadow_height()));
 
-        /* 프레임 버퍼를 배경색으로 최기화 */
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        dlight.shadow_map()->Write();
+        glClear(GL_DEPTH_BUFFER_BIT);
 
+        shadow_shader.SetMat4("u_directional_light_transform", dlight.CalculateLiightTransform());
+        // std::cout << glm::to_string(dlight.CalculateLiightTransform()) << '\n';
+
+        //* Object 1
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -2.5f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
+        shadow_shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shadow_shader);
+        brick_texture.Bind();
+        plain_texture.Bind();
+        obj1->Render();
+        
+        //* Object 2
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 1.0f, -2.5f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
+        shadow_shader.SetMat4("u_model_matrix", model_matrix);
+        dullMaterial.UseMaterial(shadow_shader);
+        dirt_texture.Bind();
+        obj2->Render();
+
+        //* X-Wing
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(-7.0f, 0.0f, 10.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.006f, 0.006f, 0.006f));
+        shadow_shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shadow_shader);
+        xwing.Render();
+
+        //* Luke
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(-1.0f, 0.0f, 0.0f));
+        model_matrix = glm::scale(model_matrix, glm::vec3(0.1F, 0.1F, 0.1F));
+        shadow_shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shadow_shader);
+        luke.Render();
+
+        //* Floor
+        model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, -2.0f, -0.0f));
+        shadow_shader.SetMat4("u_model_matrix", model_matrix);
+        shinyMaterial.UseMaterial(shadow_shader);
+        dirt_texture.Bind();
+        floor->Render();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+ 
+        //* =====================================================================*//
         /* 카메라 업데이트 */
         camera.OnUpdateTmp(window, 0.0f);
         slight1.SetFlash(camera.GetPosition() - glm::vec3(0.0F, 0.5F, 0.0F), camera.GetDirection());
 
         /* shader binding */
         shader.Bind();
+
+        glViewport(0, 0, 640*4, 480*4);
+        
+        /* 배경색 설정 */
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);  // dark grey
+        /* 프레임 버퍼를 배경색으로 최기화 */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         shader.SetMat4("u_view_projection_matrix",
                        camera.GetViewProjectionMatrix());
         shader.SetFloat3("u_eye_position", camera.GetPosition());
+        shader.SetMat4("u_directional_light_transform", dlight.CalculateLiightTransform());
+
         dlight.UseLight(shader);
         plight1.UseLight(shader);
         plight2.UseLight(shader);
         slight1.UseLight(shader);
-        slight2.UseLight(shader);
+        slight2.UseLight(shader);      
+    
+        dlight.shadow_map()->Read(GL_TEXTURE1);
+        shader.SetInt("u_texture",0);
+        shader.SetInt("u_directional_shadow_map", 1);
 
         //* Object 1
-        glm::mat4 model_matrix{1.0F};
+        // glm::mat4 model_matrix{1.0F};
+        model_matrix = glm::mat4(1.0f);
         model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, -2.5f));
         model_matrix = glm::scale(model_matrix, glm::vec3(0.6f, 0.6f, 1.0f));
         shader.SetMat4("u_model_matrix", model_matrix);
@@ -275,8 +346,12 @@ int32_t main(int32_t argc, char** argv) {  //NOLINT
         shinyMaterial.UseMaterial(shader);
         dirt_texture.Bind();
         floor->Render();
+        
         glcore::Shader::Unbind();
         glcore::Texture::Unbind();
+
+
+        
         /* (GLFW) front and back buffers를 스왑 */
         glfwSwapBuffers(window);
 

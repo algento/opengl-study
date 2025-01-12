@@ -11,10 +11,12 @@
 
 #pragma once
 
+#include <memory>
+
 #include <glm/geometric.hpp>
 
+#include "gl-core/renderer/shadow_map.h"
 #include "gl-core/shader/shader.h"
-
 namespace glcore {
 class Light {  //NOLINT
  public:
@@ -26,15 +28,27 @@ class Light {  //NOLINT
 
     virtual void UseLight(const Shader& shader) = 0;
 
+    void CreateShadwoMap(uint32_t viewport_width, uint32_t viewport_height) {
+        shadow_map_ =
+            std::make_unique<ShadowMap>(viewport_width, viewport_height);
+    }
+    virtual glm::mat4 CalculateLiightTransform() { return glm::mat4(1.0f); }
+
+    ShadowMap* shadow_map() { return shadow_map_.get(); }
+
     [[nodiscard]] glm::vec3 color() const { return color_; }
     [[nodiscard]] float ambient_intensity() const { return ambient_intensity_; }
-
     [[nodiscard]] float diffuse_intensity() const { return diffuse_intensity_; }
 
- private:
+ protected:
     glm::vec3 color_{1.0F, 1.0F, 1.0F};
     float ambient_intensity_ = 1.0F;
     float diffuse_intensity_ = 0.0F;
+
+    // shadow map
+    std::unique_ptr<ShadowMap> shadow_map_ = nullptr;
+    // shadow map 생성을 위해 광원 입장의 projection matrix
+    glm::mat4 light_proj_ = glm::mat4();
 };
 
 class DirectionalLight : public Light {
@@ -42,9 +56,19 @@ class DirectionalLight : public Light {
     DirectionalLight(glm::vec3 color, float ambient_intensity,
                      float diffuse_intensity, glm::vec3 direction)
         : Light(color, ambient_intensity, diffuse_intensity),
-          direction_(direction) {}
+          direction_(glm::normalize(direction)) {
+        //? 파라미터 설정은 어떻게 한거지?
+        light_proj_ = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
+    }
 
     void UseLight(const Shader& shader) override;
+
+    glm::mat4 CalculateLiightTransform() override {
+        // directional light의 광원 direction의 반대 방향에 있다.
+        return light_proj_ * glm::lookAt(-direction_,
+                                         glm::vec3(0.0f, 0.0f, 0.0f),
+                                         glm::vec3(0.0f, 1.0f, 0.0f));
+    }
 
     [[nodiscard]] glm::vec3 direction() const { return direction_; }
 

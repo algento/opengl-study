@@ -1,5 +1,5 @@
 /**
- * @file frame_buffer.h
+ * @file frame_buffer.cpp
  * @author Sejong Heo (tromberx@gmail.com)
  * @brief 
  * @version 0.1

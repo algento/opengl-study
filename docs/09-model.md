@@ -27,3 +27,4 @@ Assimp에서 제공하는 mesh 클래스는 material 정보를 가지고 있지�
 1. [(LearnOpenGL) Model Loading (en)](https://learnopengl.com/Model-Loading/Mesh)
 1. [(OpenGL) Model Loading Assimp (kr)](https://ciel45.tistory.com/110)
 1. [(LearnOpenGL) OpenGL Model Loading 4-3 Model (kr)](https://palamore.tistory.com/383)
+1. [Unity-Assimp 연동](https://devriripong.tistory.com/157)

@@ -27,7 +27,7 @@ std::string ReadFile(const std::string& file_path) {
     std::ifstream ifs(file_path, std::ios::in | std::ios::binary);
 
     if (!ifs.is_open()) {
-        std::cout << "Cannot find file!" << '\n';
+        std::cout << "Cannot find file!" << file_path << '\n';
         return "";
     }
     if (ifs) {
