@@ -53,3 +53,5 @@ Naive하게 depth map을 이용해서 그림자를 랜더링하면 다음과 같
 ## Reference
 
 - [udemy-opengl | directional shadow map](https://www.dropbox.com/scl/fi/qgbvv7s3880uvw994g8k0/slides_theory8_directional_shadow.pdf?rlkey=kpder9iufmeywah92a49mhf1n&dl=0)
+- https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+- https://www.opengl-tutorial.org/kr/intermediate-tutorials/tutorial-16-shadow-mapping/
