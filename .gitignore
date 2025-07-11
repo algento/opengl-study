@@ -46,6 +46,7 @@ build/
 .vs/
 sln/
 reference/
+*.DS_Store
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user

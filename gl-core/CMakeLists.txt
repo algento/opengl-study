@@ -17,7 +17,8 @@ set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
 
 ## Dependencies --------------------------------------------------------------##
 find_package(OpenGL REQUIRED)
-find_package(fmt REQUIRED)
+# find_package(fmt REQUIRED)
+find_package(fmt REQUIRED PATHS /usr/local/lib/cmake/fmt NO_DEFAULT_PATH)
 
 ## Custom-build 3rd parth libraries -----------##
 set(STB_IMAGE_INCUDE_DIRS ${3RDPARTY_DIR})

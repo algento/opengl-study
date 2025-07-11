@@ -7,7 +7,7 @@ if(CMAKE_VERSION VERSION_LESS "3.0.0")
    message(FATAL_ERROR "CMake >= 3.0.0 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 3.0.0...3.29)
+cmake_policy(VERSION 3.0.0...3.30)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -60,7 +60,7 @@ add_library(freetype STATIC IMPORTED)
 
 set_target_properties(freetype PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/freetype2"
-  INTERFACE_LINK_LIBRARIES "/Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk/usr/lib/libz.tbd;/Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk/usr/lib/libbz2.tbd;/usr/local/lib/libpng.dylib;/Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk/usr/lib/libz.tbd;/usr/local/Cellar/harfbuzz/10.1.0/lib/libharfbuzz.dylib;/usr/local/Cellar/brotli/1.1.0/lib/libbrotlidec.dylib"
+  INTERFACE_LINK_LIBRARIES "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libz.tbd;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libbz2.tbd;/usr/local/lib/libpng.dylib;/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libz.tbd;/usr/local/Cellar/harfbuzz/11.2.1/lib/libharfbuzz.dylib;/usr/local/Cellar/brotli/1.1.0/lib/libbrotlidec.dylib"
 )
 
 # Create imported target Freetype::Freetype

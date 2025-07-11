@@ -8,6 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(3RDPARTY_DIR ${CMAKE_SOURCE_DIR}/3rdparty)
 
 # Dependencies --------------------------------------------------------------##
+find_package(fmt REQUIRED)
 find_package(OpenGL REQUIRED)
 # glfw3 -----------##
 set(CMAKE_PREFIX_PATH ${3RDPARTY_DIR}/glfw/lib/cmake/glfw3) # To use library in

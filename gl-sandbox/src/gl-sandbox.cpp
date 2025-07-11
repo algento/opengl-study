@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
 #include "gl-core/renderer/texture.h"

@@ -7,7 +7,7 @@ if(CMAKE_VERSION VERSION_LESS "2.8.12")
    message(FATAL_ERROR "CMake >= 2.8.12 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.8.12...3.29)
+cmake_policy(VERSION 2.8.12...3.30)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -60,7 +60,7 @@ add_library(GLEW::glew STATIC IMPORTED)
 
 set_target_properties(GLEW::glew PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "/Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework"
+  INTERFACE_LINK_LIBRARIES "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework"
 )
 
 # Load information for each installed configuration.
